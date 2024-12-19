@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\User;
 
 class ServiceDocumentsTable extends Component
 {
@@ -49,13 +51,30 @@ class ServiceDocumentsTable extends Component
 
     public function render()
     {
-        $documents = $this->service->documents()
+        if(Auth::user()->role->nom == 'SuperAdministrateur'){
+            $documents = $this->service->documents()
             ->paginate(10);
 
-        $recentDocuments = $this->service->documents()
+            $recentDocuments = $this->service->documents()
             ->orderBy('created_at', 'desc') // Trier par date d'ajout, du plus récent au plus ancien
             ->take(5) // Limiter à 5 documents
             ->get(); // Récupérer les résultats
+
+        } else {
+            $user = User::find(Auth::user()->id);
+            $documents = $this->service->documents()
+            ->where('confidentiel', false)
+            ->orwhereIn('nom', $user->confidentialite()->pluck('nom'))
+            ->paginate(10);
+
+            $recentDocuments = $this->service->documents()
+            ->orderBy('created_at', 'desc') // Trier par date d'ajout, du plus récent au plus ancien
+            ->where('confidentiel', false)
+            ->orwhereIn('nom', $user->confidentialite()->pluck('nom'))
+            ->take(5) // Limiter à 5 documents
+            ->get(); // Récupérer les résultats
+
+        }
 
         $users = $this->service->users()
             ->paginate(10);

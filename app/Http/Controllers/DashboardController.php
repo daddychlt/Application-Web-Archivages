@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Service;
 use App\Models\Role;
 use App\Models\Document;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -17,10 +18,11 @@ class DashboardController extends Controller
         $user = Auth::user();
         $service = $user->service;
 
-        if( $user->role == "SuperAdministrateur" ){
+
+        if( $user->role->nom == "SuperAdministrateur" ){
             $activities = ActivityLog::latest()->take(3)->get(); // Les 3 dernières actions
         } else {
-            $activities = ActivityLog::latest()->whereIn('description', $service->documents()->pluck('nom'))->take(3)->get(); // Les 3 dernières actions
+            $activities = ActivityLog::latest()->whereIn('description', $service->documents()->pluck('nom'))->where(function(Builder $query) use ($user) { $query->whereIn('description', $user->confidentialite()->pluck('nom'))->orWhere('confidentiel', false); })->take(3)->get(); // Les 3 dernières actions
         };
         $users = User::all();
         $services = Service::all();

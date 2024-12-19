@@ -77,7 +77,7 @@ class Uploadingfile extends Component
             $text = $pdf->getText();
             $mot_cle = $this->mot_cle;
 
-            $texts = $text . ' ' . $mot_cle;
+            $texts = $text . "\n" . $mot_cle;
 
             $document = Document::create([
                 'nom' => $newName,
@@ -105,6 +105,7 @@ class Uploadingfile extends Component
                 'description' => $document->nom,
                 'icon' => '✅',
                 'user_id' => Auth::user()->id,
+                'confidentiel' => $this->confidence,
             ]);
 
             return redirect()->route('document')->with('success', 'Le fichier a été téléchargé avec succès sous le nom de ' . $newName);

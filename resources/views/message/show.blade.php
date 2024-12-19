@@ -57,7 +57,7 @@
                     {{ $pivot->message }}
                 </p>
                 <p class="text-gray-500 dark:text-gray-300">
-                    Document concerné : <a href="{{ asset('storage/' . $document->filename) }}"><span
+                    Document concerné : <a href="{{ route('pdf.view', $document->id) }}"><span
                             class="text-blue-500 hover:underline ">{{ $document->nom }}</span></a>
                 </p>
             </div>

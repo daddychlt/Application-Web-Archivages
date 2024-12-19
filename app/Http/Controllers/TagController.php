@@ -47,7 +47,7 @@ class TagController extends Controller
     {
         $document = Document::findOrFail($id);
         $users = User::all();
-        $users_tag = User::where('id', '!=', Auth::id())->get();
-        return view('tag', compact('document', 'users', 'users_tag'));
+        $users_tag = User::where('id', '!=', Auth::id())->whereIn('service_id', $document->services->pluck('id'))->get();
+        return view('tag', compact('document', 'users_tag'));
     }
 }

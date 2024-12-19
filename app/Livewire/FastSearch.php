@@ -12,6 +12,8 @@ class FastSearch extends Component
     public $query = '';
     public $service;
 
+    public $service_ident;
+
     public $document_autor;
 
     public function render()
@@ -19,6 +21,7 @@ class FastSearch extends Component
 
         $user = User::findOrFail(Auth::user()->id);
         $service = $user->service;
+        $this->service_ident = $user->identificate;
 
         if (strlen($this->query) == 0) {
             $documents = [];
@@ -29,11 +32,12 @@ class FastSearch extends Component
             } else{
                 $alldocuments = Document::search($this->query)->get();
                 $service = $user->service;
-                $documents = $alldocuments->filter(function ($document) use ($service) { return $document->services->contains($service); });
-                $this->document_autor = $user->confidentialite()->pluck('nom')->toArray();
+                $documents_service = $alldocuments->filter(function ($document) use ($service) { return $document->services->contains($service); });
+                $documents = $documents_service->where('confidentiel', false);
+                $this->document_autor = $documents_service->whereIn('nom', $user->confidentialite()->pluck('nom'));
             }
         }
 
-        return view('livewire.fast-search', ['documents' => $documents]);
+        return view('livewire.fast-search', ['documents' => $documents, 'document_autor' => $this->document_autor]);
     }
 }

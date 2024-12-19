@@ -6,6 +6,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 use App\Models\User;
+use App\Models\Document;
 
 class MessageView extends Component
 {
@@ -20,6 +21,14 @@ class MessageView extends Component
             ->orderBy('pivot_created_at', 'desc')
             ->paginate(5);
 
-        return view('livewire.message-view', ['user' => $user, 'taggedDocuments' => $taggedDocuments]);
+        $taggerDocuments = Document::whereHas('users', function ($query) {
+                $query->where('tagger', Auth::user()->id);
+            })
+            ->with(['users' => function ($query) {
+                $query->orderBy('pivot_created_at', 'desc'); // Tri des relations pivot
+            }])
+            ->paginate(5);
+
+        return view('livewire.message-view', ['user' => $user, 'taggedDocuments' => $taggedDocuments, 'taggerDocuments' => $taggerDocuments]);
     }
 }

@@ -29,7 +29,7 @@
                 </li>
             </ol>
         </div>
-        @livewire('document-search')
+        @livewire('document-search', ['service' => $service])
 
     </x-slot>
 

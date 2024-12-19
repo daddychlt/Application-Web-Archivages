@@ -13,23 +13,33 @@ class DocumentSearch extends Component
     public $service;
     public $document_autor;
 
+    public $documents_conf;
+
+    public function mount($service)
+    {
+        $this->service = $service ;
+    }
+
     public function render()
     {
 
         $user = User::findOrFail(Auth::user()->id);
-        $service = $user->service;
+        $service = $this->service;
+
 
         if (strlen($this->query) == 0) {
             $documents = [];
+            $this->documents_conf = [];
         } else {
             if($user->role->nom === "SuperAdministrateur")
             {
-                $documents = Document::search(query:$this->query)->get();
+                $alldocuments = Document::search(query:$this->query)->get();
+                $documents = $alldocuments->filter(function ($document) use ($service) { return $document->services->contains($service); });
             } else{
                 $alldocuments = Document::search($this->query)->get();
-                $service = $user->service;
                 $documents_service = $alldocuments->filter(function ($document) use ($service) { return $document->services->contains($service); });
-                $documents = $documents_service->where('confidentiel', false)->orwhereIn('nom', $user->confidentialite()->pluck('nom'));
+                $documents = $documents_service->where('confidentiel', false);
+                $this->document_autor = $documents_service->whereIn('nom', $user->confidentialite()->pluck('nom'));
             }
         }
 
