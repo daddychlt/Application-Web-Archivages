@@ -31,7 +31,7 @@ class DocumentSearch extends Component
             $documents = [];
             $this->documents_conf = [];
         } else {
-            if($user->role->nom === "SuperAdministrateur")
+            if($user->role->nom === "SuperAdministrateur" | $user->role->nom === "Administrateur")
             {
                 $alldocuments = Document::search(query:$this->query)->get();
                 $documents = $alldocuments->filter(function ($document) use ($service) { return $document->services->contains($service); });

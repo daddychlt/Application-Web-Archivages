@@ -1,55 +1,62 @@
 <div>
     {{-- To attain knowledge, add things every day; To attain wisdom, subtract things every day. --}}
-    <div id="div1" style="display: block;">
+    <div id="div1" style="display: block;" class="p-6">
         <!-- Titre principal -->
         <h1 class="text-2xl pt-6 font-bold text-center text-gray-800 dark:text-gray-200 mb-6">
             Messages reçus
         </h1>
         <div class="container mx-auto px-4 py-6">
-            <ul
-                class="max-w-3xl mx-auto divide-y divide-gray-200 dark:divide-gray-700 bg-white shadow rounded-lg dark:bg-gray-800">
-                @foreach ($taggedDocuments as $document)
-                    @php
-                        $tagger = \App\Models\User::find($document->pivot->tagger);
-                    @endphp
-                    <li>
-                        <a href="{{ route('message.show', $document->pivot->id) }}"
-                            class="block hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <div class="flex items-center px-4 py-4 space-x-4 rtl:space-x-reverse sm:px-6">
-                                <!-- Indicateur de message -->
-                                @if ($document->pivot->new == true)
-                                    <span class="w-2 h-2 me-2 bg-red-500 rounded-full"></span>
-                                @else
-                                    <span class="w-2 h-2 me-2 bg-transparent"></span>
-                                @endif
+            @if (count($taggedDocuments) > 0)
+                <ul
+                    class="max-w-3xl mx-auto divide-y divide-gray-200 dark:divide-gray-700 bg-white shadow rounded-lg dark:bg-gray-800">
+                    @foreach ($taggedDocuments as $document)
+                        @php
+                            $tagger = \App\Models\User::find($document->pivot->tagger);
+                        @endphp
+                        <li>
+                            <a href="{{ route('message.show', $document->pivot->id) }}"
+                                class="block hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <div class="flex items-center px-4 py-4 space-x-4 rtl:space-x-reverse sm:px-6">
+                                    <!-- Indicateur de message -->
+                                    @if ($document->pivot->new == true)
+                                        <span class="w-2 h-2 me-2 bg-red-500 rounded-full"></span>
+                                    @else
+                                        <span class="w-2 h-2 me-2 bg-transparent"></span>
+                                    @endif
 
-                                <!-- Avatar -->
-                                <div
-                                    class="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-blue-100 rounded-full dark:bg-gray-600">
-                                    <span class="font-medium text-gray-600 dark:text-gray-300">
-                                        {{ $tagger->name[0] }}
-                                    </span>
-                                </div>
+                                    <!-- Avatar -->
+                                    <div
+                                        class="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-blue-100 rounded-full dark:bg-gray-600">
+                                        <span class="font-medium text-gray-600 dark:text-gray-300">
+                                            {{ $tagger->name[0] }}
+                                        </span>
+                                    </div>
 
-                                <!-- Contenu principal -->
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                        {{ $tagger->name }}
-                                    </p>
-                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                                        {{ $tagger->email }} - {{ Str::limit($document->pivot->message, 10) }}...
-                                    </p>
-                                </div>
+                                    <!-- Contenu principal -->
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                            {{ $tagger->name }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                            {{ $tagger->email }} - {{ Str::limit($document->pivot->message, 10) }}...
+                                        </p>
+                                    </div>
 
-                                <!-- Date -->
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $document->pivot->created_at->diffForHumans() }}
+                                    <!-- Date -->
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $document->pivot->created_at->diffForHumans() }}
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <h1 class="font-italic text-sm pt-6 font-bold text-center text-gray-600 dark:text-gray-200 mb-6">
+                    Aucun message réçu
+                </h1>
+            @endif
+
         </div>
         <!-- Pagination -->
         <div class="mt-4">
@@ -57,62 +64,68 @@
         </div>
     </div>
 
-    <div id="div2" style="display: none;">
+    <div id="div2" style="display: none;" class="p-6">
         <h1 class="text-2xl pt-6 font-bold text-center text-gray-800 dark:text-gray-200 mb-6">
             Messages envoyés
         </h1>
         <div class="container mx-auto px-4 py-6">
-            <ul
-                class="max-w-3xl mx-auto divide-y divide-gray-200 dark:divide-gray-700 bg-white shadow rounded-lg dark:bg-gray-800">
-                @foreach ($taggerDocuments as $document)
-                    @foreach ($document->users as $user)
-                        @php
-                            $tagged = \App\Models\User::find($user->pivot->user_id);
-                        @endphp
-                        <li>
-                            <a href="{{ route('message.showSend', $user->id) }}"
-                                class="block hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <div class="flex items-center px-4 py-4 space-x-4 rtl:space-x-reverse sm:px-6">
-                                    <!-- Indicateur de message -->
-                                    @if ($user->pivot->new == true)
-                                        <span class="inline-block w-20 text-center py-5">
-                                            <em class="font-italic text-xs text-gray-200">Envoyé...</em>
-                                        </span>
-                                    @else
-                                        <span class="inline-block w-20 text-center">
-                                            <em class="font-italic text-xs text-gray-200">Vu</em>
-                                        </span>
-                                    @endif
+            @if (count($taggerDocuments) > 0)
+                <ul
+                    class="max-w-3xl mx-auto divide-y divide-gray-200 dark:divide-gray-700 bg-white shadow rounded-lg dark:bg-gray-800">
+                    @foreach ($taggerDocuments as $document)
+                        @foreach ($document->users as $user)
+                            @php
+                                $tagged = \App\Models\User::find($user->pivot->user_id);
+                            @endphp
+                            <li>
+                                <a href="{{ route('message.showSend', $user->id) }}"
+                                    class="block hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <div class="flex items-center px-4 py-4 space-x-4 rtl:space-x-reverse sm:px-6">
+                                        <!-- Indicateur de message -->
+                                        @if ($user->pivot->new == true)
+                                            <span class="inline-block w-20 text-center py-5">
+                                                <em class="font-italic text-xs text-gray-200">Envoyé...</em>
+                                            </span>
+                                        @else
+                                            <span class="inline-block w-20 text-center">
+                                                <em class="font-italic text-xs text-gray-200">Vu</em>
+                                            </span>
+                                        @endif
 
 
-                                    <!-- Avatar -->
-                                    <div
-                                        class="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-blue-100 rounded-full dark:bg-gray-600">
-                                        <span class="font-medium text-gray-600 dark:text-gray-300">
-                                            {{ $tagged->name[0] }}
-                                        </span>
+                                        <!-- Avatar -->
+                                        <div
+                                            class="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-blue-100 rounded-full dark:bg-gray-600">
+                                            <span class="font-medium text-gray-600 dark:text-gray-300">
+                                                {{ $tagged->name[0] }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Contenu principal -->
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                Vous à {{ $tagged->name }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                {{ $tagged->email }} - {{ Str::limit($user->pivot->message, 10) }}...
+                                            </p>
+                                        </div>
+
+                                        <!-- Date -->
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                                            {{ $user->pivot->created_at->diffForHumans() }}
+                                        </div>
                                     </div>
-
-                                    <!-- Contenu principal -->
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                            Vous à {{ $tagged->name }}
-                                        </p>
-                                        <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                                            {{ $tagged->email }} - {{ Str::limit($user->pivot->message, 10) }}...
-                                        </p>
-                                    </div>
-
-                                    <!-- Date -->
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $user->pivot->created_at->diffForHumans() }}
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
+                                </a>
+                            </li>
+                        @endforeach
                     @endforeach
-                @endforeach
-            </ul>
+                </ul>
+            @else
+                <h1 class="font-italic text-sm pt-6 font-bold text-center text-gray-600 dark:text-gray-200 mb-6">
+                    Aucun message envoyé
+                </h1>
+            @endif
         </div>
         <!-- Pagination -->
         <div class="mt-4">

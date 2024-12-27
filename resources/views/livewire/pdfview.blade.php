@@ -7,10 +7,15 @@
             <header class="flex items-center justify-between px-6 py-3 bg-blue-600 rounded-t-lg">
                 <h1 class="text-lg font-semibold text-white">Aperçu du document</h1>
                 <button onclick="window.history.back()" class="text-white hover:text-gray-300 focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
+                    <div class="inline-flex space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span>
+                            Retour
+                        </span>
+                    </div>
                 </button>
             </header>
 
@@ -18,8 +23,13 @@
             <div class="grid grid-cols-1 md:grid-cols-4">
                 <!-- Aperçu du document (colonne principale) -->
                 <div class="col-span-3">
-                    <iframe src="{{ asset('storage/' . $document->filename) }}"
-                        class="w-full h-[500px] border-none rounded-bl-lg"></iframe>
+                    @if (in_array($document->type, ['pdf', 'txt', 'png', 'jpeg']))
+                        <iframe src="{{ asset('storage/' . $document->filename) }}"
+                            class="w-full h-[500px] border-none rounded-bl-lg"></iframe>
+                    @else
+                        <iframe src="https://docs.google.com/gview?url={{ asset('storage/' . $document->filename) }}&embedded=true"
+                            class="w-full h-[500px] border-none rounded-bl-lg">Affichage indisponible</iframe>
+                    @endif
                 </div>
 
                 <!-- Informations supplémentaires (colonne secondaire) -->

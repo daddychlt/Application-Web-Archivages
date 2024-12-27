@@ -47,7 +47,17 @@ class TagController extends Controller
     {
         $document = Document::findOrFail($id);
         $users = User::all();
-        $users_tag = User::where('id', '!=', Auth::id())->whereIn('service_id', $document->services->pluck('id'))->get();
+        if ($document->confidentiel) {
+            $admin_users = User::where('role_id', 0)->orwhere('role_id', 1)->get();
+            $users_tag_serv = User::where('id', '!=', Auth::id())->whereIn('service_id', $document->services->pluck('id'))->whereHas('confidentialite', function($query) use ($document) {
+            })->get();
+            $users_tag = $users_tag_serv->merge($admin_users);
+        } else {
+            $admin_users = User::where('role_id', 0)->orwhere('role_id', 1)->get();
+            $users_tag_serv = User::where('id', '!=', Auth::id())->whereIn('service_id', $document->services->pluck('id'))->orWhere('role_id', [0, 1])->get();
+            $users_tag = $users_tag_serv->merge($admin_users);
+        }
+
         return view('tag', compact('document', 'users_tag'));
     }
 }

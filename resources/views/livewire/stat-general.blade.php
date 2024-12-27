@@ -15,7 +15,7 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-bold">Documents archivés</h2>
-                    <strong class="text-3xl font-extrabold count-up" data-target="{{ $documents }}">0</strong>
+                    <strong class="text-3xl font-extrabold count-up" data-target="{{ $documents }}"></strong>
                 </div>
             </div>
 
@@ -29,7 +29,7 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-bold">Utilisateurs</h2>
-                    <strong class="text-3xl font-extrabold count-up" data-target="{{ $users }}">0</strong>
+                    <strong class="text-3xl font-extrabold count-up" data-target="{{ $users }}"></strong>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-bold">Services</h2>
-                    <strong class="text-3xl font-extrabold count-up" data-target="{{ $services }}">0</strong>
+                    <strong class="text-3xl font-extrabold count-up" data-target="{{ $services }}"></strong>
                 </div>
             </div>
 

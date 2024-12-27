@@ -13,16 +13,6 @@
             <p class="text-lg font-light mb-8 sm:px-16 lg:px-32">
                 Votre espace dédié pour une gestion efficace et sécurisée de vos documents numériques !
             </p>
-            <div class="flex flex-col sm:flex-row sm:justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#"
-                    class="px-8 py-3 bg-white text-indigo-600 font-medium rounded-lg shadow-md hover:bg-gray-100 hover:shadow-lg transition">
-                    Commencer
-                </a>
-                <a href="#"
-                    class="px-8 py-3 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-indigo-600 transition">
-                    En savoir plus
-                </a>
-            </div>
         </div>
     </section>
 
@@ -99,5 +89,6 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-gray-300 text-center py-6">
         <p>&copy; 2024 DocArch - Tous droits réservés.</p>
+        <p>Nos contacts <a href="https://www.dctc-ci.com/" class="text-gray-400 hover:underline hover:text-gray-200">dctc-ci.com</a> - <a class="text-gray-400 hover:underline hover:text-gray-200">info@dctc-ci.com</a> </p>
     </footer>
 </x-app-layout>

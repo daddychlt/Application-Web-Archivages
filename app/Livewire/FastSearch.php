@@ -26,7 +26,7 @@ class FastSearch extends Component
         if (strlen($this->query) == 0) {
             $documents = [];
         } else {
-            if($user->role->nom === "SuperAdministrateur")
+            if($user->role->nom === "SuperAdministrateur" | $user->role->nom === "Administrateur")
             {
                 $documents = Document::search(query:$this->query)->get();
             } else{

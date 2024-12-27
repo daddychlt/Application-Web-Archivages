@@ -51,7 +51,7 @@ class ServiceDocumentsTable extends Component
 
     public function render()
     {
-        if(Auth::user()->role->nom == 'SuperAdministrateur'){
+        if(Auth::user()->role->nom == 'SuperAdministrateur' | Auth::user()->role->nom == 'Administrateur') {
             $documents = $this->service->documents()
             ->paginate(10);
 

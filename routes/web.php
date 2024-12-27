@@ -69,4 +69,7 @@ Route::middleware([
     Route::post('/indentification/store/{id}', [ServiceController::class, 'identUser'])->name('service.ident');
 })->group(function(){
     Route::get('/pdf/{id}', [PdfView::class, 'index'])->name('pdf.view');
+})->group(function () {
+    Route::delete('/document/{id}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 });
+

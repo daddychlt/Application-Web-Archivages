@@ -185,7 +185,8 @@
                             <span>Chargement...</span>
                         </div>
                     @endif
-
+                    
+                    {{--
                     <li class="flex items-center space-x-4">
                         <strong>Nombre d'utilisateur identifié :</strong> {{ count($service->identificate) }}
                         <label class="inline-flex items-center cursor-pointer">
@@ -257,6 +258,7 @@
                             <span>Chargement...</span>
                         </div>
                     @endif
+                    --}}
 
                 </ul>
 
@@ -282,17 +284,6 @@
                                 </span>
                             </button>
                         </form>
-                    </div>
-                @endif
-                @if (Auth::user()->role->nom === 'SuperAdministrateur' | Auth::user()->role->nom === 'Administrateur')
-                    <div class="space-y-4">
-                        <button data-modal-target="crud-modal-identifier" data-modal-toggle="crud-modal-identifier"
-                            class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
-                            <span
-                                class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                                Identifier un utilisateur
-                            </span>
-                        </button>
                     </div>
                 @endif
 
@@ -354,6 +345,7 @@
 
                 <!-- Main modal -->
                 {{-- Modal indentifier un utilisateur --}}
+                {{--
                 <div id="crud-modal-identifier" data-modal-backdrop="static" tabindex="-1" aria-hidden="true"
                     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -404,6 +396,7 @@
                         </div>
                     </div>
                 </div>
+                --}}
 
             </div>
         </div>

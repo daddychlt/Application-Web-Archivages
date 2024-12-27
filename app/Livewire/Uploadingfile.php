@@ -11,12 +11,13 @@ use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
 use Smalot\PdfParser\Parser;
 use Spatie\PdfToText\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class Uploadingfile extends Component
 {
     use WithFileUploads;
 
-    #[Validate('required|file|mimes:pdf|max:10240')]
+    #[Validate('required|file|mimes:txt,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,png,jpeg|max:10240')]
     public $file;
     public $mot_cle;
     public $service_id = [];
@@ -71,10 +72,31 @@ class Uploadingfile extends Component
             // Le chemin complet du fichier
             $fullPath = storage_path('app/public/' . $path);
 
-            // Parse PDF file and build necessary objects
-            $parser = new Parser();
-            $pdf = $parser->parseFile($fullPath);
-            $text = $pdf->getText();
+            if ($this->file->getClientOriginalExtension() == 'pdf') {
+                // Parse PDF file and build necessary objects
+                $parser = new Parser();
+                $pdf = $parser->parseFile($fullPath);
+                $text = $pdf->getText();
+            } elseif($this->file->getClientOriginalExtension() == 'txt') {
+                // Lire le contenu du fichier
+                $text = file_get_contents($fullPath);
+            } elseif ($this->file->getClientOriginalExtension() == 'docx') {
+                $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath);
+                $text = '';
+                // Parcourir les sections et récupérer le texte
+                foreach ($phpWord->getSections() as $section) {
+                    foreach ($section->getElements() as $element) {
+                        if (method_exists($element, 'getText')) {
+                            if (method_exists($element, 'getElements')) {
+                                $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
+                            }
+                        }
+                    }
+                }
+            } else {
+                $text = '';
+            }
+
             $mot_cle = $this->mot_cle;
 
             $texts = $text . "\n" . $mot_cle;

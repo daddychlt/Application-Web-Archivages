@@ -190,7 +190,7 @@
                     {{ __('Administrateur') }}
                 </x-responsive-nav-link>
             @endif
-            <x-responsive-nav-link href="{{ route('document') }}" :active="request()->routeIs('service')">
+            <x-responsive-nav-link href="{{ route('document') }}" :active="request()->routeIs('document')">
                 {{ __('Document') }}
             </x-responsive-nav-link>
 
@@ -214,7 +214,8 @@
 
             <div class="mt-3 space-y-1">
                 <!-- Account Management -->
-                <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
+
+                <x-responsive-nav-link href="{{ route('profile', Auth::user()->id) }}" :active="request()->routeIs('profile')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 

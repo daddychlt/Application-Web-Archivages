@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 
 class UserController extends Controller
@@ -44,7 +45,6 @@ class UserController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Utilisateur ajouté avec succès.');
-
     }
 
     public function store_role(Request $request): \Illuminate\Http\RedirectResponse
@@ -60,7 +60,6 @@ class UserController extends Controller
 
 
         return redirect()->back()->with('success', 'Service ajouté avec succès.');
-
     }
 
     public function edit($id)
@@ -86,7 +85,7 @@ class UserController extends Controller
         // Validation des données
         $validatedData = $request->validate([
             'name' => 'required|string|min:3',
-            'email' => 'required|email|unique:users,email,'.$id,
+            'email' => 'required|email|unique:users,email,' . $id,
             'service' => 'required|int',
             'role' => 'required|int',
         ]);
@@ -108,7 +107,7 @@ class UserController extends Controller
         // Validation des données
         $validatedData = $request->validate([
             'name' => 'required|string|min:3',
-            'email' => 'required|email|unique:users,email,'.$id,
+            'email' => 'required|email|unique:users,email,' . $id,
         ]);
 
         // Mise à jour des informations de l'utilisateur
@@ -120,30 +119,30 @@ class UserController extends Controller
     }
 
     public function update_password(Request $request)
-{
+    {
 
-    // Valider les données
-    $validatedData = $request->validate([
-        'current_password' => 'required',
-        'new_password' => 'required', 'min:8', 'confirmed', // new_password_confirmation doit être envoyé
-    ]);
-
-    // Vérifier si le mot de passe actuel est correct
-    if (!Hash::check($validatedData['current_password'], $request->user()->password)) {
-        throw ValidationException::withMessages([
-            'current_password' => 'Le mot de passe actuel est incorrect.',
+        // Valider les données
+        $validatedData = $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required',
+            'min:8',
+            'confirmed', // new_password_confirmation doit être envoyé
         ]);
+
+        // Vérifier si le mot de passe actuel est correct
+        if (!Hash::check($validatedData['current_password'], $request->user()->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => 'Le mot de passe actuel est incorrect.',
+            ]);
+        }
+
+        // Mettre à jour le mot de passe de l'utilisateur
+        $request->user()->update([
+            'password' => Hash::make($validatedData['new_password']),
+        ]);
+
+        return back()->with('succes', 'Mot de passe changé avec succès !');
     }
-
-    // Mettre à jour le mot de passe de l'utilisateur
-    $request->user()->update([
-        'password' => Hash::make($validatedData['new_password']),
-    ]);
-
-    return back()->with('succes', 'Mot de passe changé avec succès !');
-
-}
-
 
     public function destroy($id)
     {
@@ -160,10 +159,13 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        $users_tag = User::where('id', '!=', Auth::id()) ->whereDoesntHave('role', function ($query) { $query->where('nom', 'SuperAdministrateur'); }) ->get();
+        $users_tag = User::where('id', '!=', Auth::id())->whereDoesntHave('role', function ($query) {
+            $query->where('nom', 'SuperAdministrateur');
+        })->get();
         $services = Service::all();
         $documents = Document::all();
         $roles = Role::all();
+
         return view('users', compact('users', 'users_tag', 'services', 'documents', 'roles'));
     }
 }

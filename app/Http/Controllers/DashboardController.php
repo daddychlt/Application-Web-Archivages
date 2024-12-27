@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $service = $user->service;
 
 
-        if( $user->role->nom == "SuperAdministrateur" ){
+        if( $user->role->nom == "SuperAdministrateur" | $user->role->nom == "Administrateur") {
             $activities = ActivityLog::latest()->take(3)->get(); // Les 3 dernières actions
         } else {
             $activities = ActivityLog::latest()->whereIn('description', $service->documents()->pluck('nom'))->where(function(Builder $query) use ($user) { $query->whereIn('description', $user->confidentialite()->pluck('nom'))->orWhere('confidentiel', false); })->take(3)->get(); // Les 3 dernières actions
