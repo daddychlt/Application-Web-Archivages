@@ -90,6 +90,87 @@
             </div>
         </form>
 
+
+        @if (!\App\Models\Licence::isVerified())
+            <!-- Extra Large Modal -->
+            <div id="extralarge-modal" tabindex="-1"
+                class="fixed inset-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto h-full bg-gray-900 bg-opacity-50">
+                <div class="relative w-full max-w-7xl h-full">
+                    <!-- Modal content -->
+                    <div
+                        class="relative bg-white shadow-lg rounded-lg p-6 w-full h-full flex flex-col justify-center dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div
+                            class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+                                Vérification de la licence
+                            </h3>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-4 md:p-5 space-y-4 flex-grow">
+                            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                Pour continuer à utiliser cette application, veuillez entrer votre clé de licence
+                                valide.
+                            </p>
+                            <form method="POST" action="{{ route('licence.verify') }}">
+                                @csrf
+                                <div>
+                                    <label for="licence_key"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Clé de
+                                        licence</label>
+                                    <input type="password" id="licence_key" name="licence_key" required
+                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                </div>
+                                <div class="mt-4">
+                                    <button type="submit"
+                                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Vérifier la licence
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div class="mt-4 text-center">
+                                <p class="text-xs text-gray-500">Besoin d'aide ? Contactez <a
+                                        href="mailto:support@example.com"
+                                        class="text-blue-500 hover:underline">nous</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+        @if (!\App\Models\Licence::isValid())
+            <!-- Extra Large Modal -->
+            <div id="extralarge-modal" tabindex="-1"
+                class="fixed inset-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto h-full bg-gray-900 bg-opacity-50">
+                <div class="relative w-full max-w-7xl h-full">
+                    <!-- Modal content -->
+                    <div
+                        class="relative bg-white shadow-lg rounded-lg p-6 w-full h-full flex flex-col justify-center dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div
+                            class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+                                Vérification de la licence
+                            </h3>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-4 md:p-5 space-y-4 flex-grow">
+                            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                Votre licence a expiré. Pour continuer à utiliser cette application, veuillez renouveller votre licence.
+                            </p>
+
+                            <div class="mt-4 text-center">
+                                <p class="text-xs text-gray-500">Besoin d'aide ? Contactez <a
+                                        href="mailto:support@example.com"
+                                        class="text-blue-500 hover:underline">nous</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         @if (session('success'))
             <div id="toast-success"
                 class="flex items-center w-full max-w-xs p-4 mt-6 text-gray-500 bg-white rounded-lg shadow dark:bg-gray-800 dark:text-gray-400"

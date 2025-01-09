@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckLicence;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // Middlewar Aliases Licence
+        $middleware->alias([
+            'checklicence' => CheckLicence::class,
+        ]);
+
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

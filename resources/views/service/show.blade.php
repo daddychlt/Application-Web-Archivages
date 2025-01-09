@@ -30,10 +30,9 @@
     @livewire('service-documents-table', ['service' => $service, 'allusers' => $users_tag])
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-300 text-center py-6">
+    <footer class="bg-gray-800 text-gray-300 text-center py-6 w-full">
         <p>&copy; 2024 DocArch - Tous droits réservés.</p>
-        <p>Nos contacts <a href="#" class="text-gray-400 hover:underline hover:text-gray-200">dctc-ci.com</a>
-        </p>
+        <p>Nos contacts <a href="https://www.dctc-ci.com/" class="text-gray-400 hover:underline hover:text-gray-200">dctc-ci.com</a> - <a class="text-gray-400 hover:underline hover:text-gray-200">info@dctc-ci.com</a> </p>
     </footer>
 
 </x-app-layout>

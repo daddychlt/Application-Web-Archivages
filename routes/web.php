@@ -9,67 +9,69 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PdfView;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LicenceController;
 
-Route::get('/newAccount', [RegisterController::class, 'index'])->name('register');
-Route::post('/Account/store', [RegisterController::class, 'store'])->name('user.new');
+
+Route::get('/newAccount', [RegisterController::class, 'index'])->middleware('checklicence')->name('register');
+Route::post('/Account/store', [RegisterController::class, 'store'])->middleware('checklicence')->name('user.new');
+Route::post('/licence/verify', [LicenceController::class, 'verify'])->name('licence.verify');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-])->group(function(){
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+])->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->middleware('checklicence')->name('dashboard');
 })->group(function () {
-    Route::get('/service', [ServiceController::class, 'index'])->name('service');
+    Route::get('/service', [ServiceController::class, 'index'])->middleware('checklicence')->name('service');
 })->group(function () {
-    Route::post('/service/store', [ServiceController::class, 'store'])->name('service.store');
+    Route::post('/service/store', [ServiceController::class, 'store'])->middleware('checklicence')->name('service.store');
 })->group(function () {
-    Route::get('/utilisateur', [UserController::class, 'index'])->name('user');
+    Route::get('/utilisateur', [UserController::class, 'index'])->middleware('checklicence')->name('user');
 })->group(function () {
-    Route::get('/service/{id}', [ServiceController::class, 'show'])->name('service.show');
+    Route::get('/service/{id}', [ServiceController::class, 'show'])->middleware('checklicence')->name('service.show');
 })->group(function () {
-    Route::get('/utilisateur/{id}', [UserController::class, 'show'])->name('user.show');
+    Route::get('/utilisateur/{id}', [UserController::class, 'show'])->middleware('checklicence')->name('user.show');
 })->group(function () {
-    Route::post('/utilisateur/store', [UserController::class, 'store'])->name('user.store');
+    Route::post('/utilisateur/store', [UserController::class, 'store'])->middleware('checklicence')->name('user.store');
 })->group(function () {
-    Route::post('/utilisateur/store_role', [UserController::class, 'store_role'])->name('user.store_role');
+    Route::post('/utilisateur/store_role', [UserController::class, 'store_role'])->middleware('checklicence')->name('user.store_role');
 })->group(function () {
-    Route::get('/utilisateur/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::get('/utilisateur/{id}/edit', [UserController::class, 'edit'])->middleware('checklicence')->name('users.edit');
 })->group(function () {
-    Route::put('/utilisateur/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::put('/utilisateur/{id}', [UserController::class, 'update'])->middleware('checklicence')->name('users.update');
 })->group(function () {
-    Route::delete('/utilisateur/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::delete('/utilisateur/{id}', [UserController::class, 'destroy'])->middleware('checklicence')->name('users.destroy');
 })->group(function () {
-    Route::get('/document', [DocumentController::class, 'index'])->name('document');
+    Route::get('/document', [DocumentController::class, 'index'])->middleware('checklicence')->name('document');
 })->group(function () {
-    Route::get('/profile/{id}', [UserController::class, 'show_profile'])->name('profile');
+    Route::get('/profile/{id}', [UserController::class, 'show_profile'])->middleware('checklicence')->name('profile');
 })->group(function () {
-    Route::put('/update_profile/{id}', [UserController::class, 'update_profile'])->name('user.update_profile');
-})->group(function(){
-    Route::post('/user/update_password', [UserController::class, 'update_password'])->name('user.update_password');
-})->group(function(){
-    Route::delete('/service/{id}', [ServiceController::class, 'destroy'])->name('service.destroy');
-})->group(function(){
-    Route::put('/service_update/{id}', [ServiceController::class, 'update'])->name('service.update');
-})->group(function(){
-    Route::get('/documents/{service}', [DocumentController::class, 'getDocuments'])->name('show_docs');;
-})->group(function(){
-    Route::get('/api/users', [UserController::class, 'users.search']);
-})->group(function(){
-    Route::get('/tag/{id}', [TagController::class, 'index'])->name('tag');
-})->group(function(){
-    Route::post('/tag/store', [TagController::class, 'store'])->name('tag.store');
-})->group(function(){
-    Route::get('/message', [MessageController::class, 'index'])->name('message');
-})->group(function(){
-    Route::get('/message/{pivotId}', [MessageController::class, 'show'])->name('message.show');
-})->group(function(){
-    Route::get('/messageSended/{pivotId}', [MessageController::class, 'showSend'])->name('message.showSend');
-})->group(function(){
-    Route::post('/indentification/store/{id}', [ServiceController::class, 'identUser'])->name('service.ident');
-})->group(function(){
-    Route::get('/pdf/{id}', [PdfView::class, 'index'])->name('pdf.view');
+    Route::put('/update_profile/{id}', [UserController::class, 'update_profile'])->middleware('checklicence')->name('user.update_profile');
 })->group(function () {
-    Route::delete('/document/{id}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+    Route::post('/user/update_password', [UserController::class, 'update_password'])->middleware('checklicence')->name('user.update_password');
+})->group(function () {
+    Route::delete('/service/{id}', [ServiceController::class, 'destroy'])->middleware('checklicence')->name('service.destroy');
+})->group(function () {
+    Route::put('/service_update/{id}', [ServiceController::class, 'update'])->middleware('checklicence')->name('service.update');
+})->group(function () {
+    Route::get('/documents/{service}', [DocumentController::class, 'getDocuments'])->middleware('checklicence')->name('show_docs');;
+})->group(function () {
+    Route::get('/api/users', [UserController::class, 'users.search'])->middleware('checklicence');
+})->group(function () {
+    Route::get('/tag/{id}', [TagController::class, 'index'])->middleware('checklicence')->name('tag');
+})->group(function () {
+    Route::post('/tag/store', [TagController::class, 'store'])->middleware('checklicence')->name('tag.store');
+})->group(function () {
+    Route::get('/message', [MessageController::class, 'index'])->middleware('checklicence')->name('message');
+})->group(function () {
+    Route::get('/message/{pivotId}', [MessageController::class, 'show'])->middleware('checklicence')->name('message.show');
+})->group(function () {
+    Route::get('/messageSended/{pivotId}', [MessageController::class, 'showSend'])->middleware('checklicence')->name('message.showSend');
+})->group(function () {
+    Route::post('/indentification/store/{id}', [ServiceController::class, 'identUser'])->middleware('checklicence')->name('service.ident');
+})->group(function () {
+    Route::get('/pdf/{id}', [PdfView::class, 'index'])->middleware('checklicence')->name('pdf.view');
+})->group(function () {
+    Route::delete('/document/{id}', [DocumentController::class, 'destroy'])->middleware('checklicence')->name('documents.destroy');
 });
-

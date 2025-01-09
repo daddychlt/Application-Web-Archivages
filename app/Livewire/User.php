@@ -12,7 +12,7 @@ class User extends Component
     public $documents;
     public $roles;
     public $users_tag;
-    public $edit=false;
+    public $edit = false;
 
 
     public $search_var = '';
@@ -45,10 +45,10 @@ class User extends Component
         }
     }
 
-    public function editer(){
+    public function editer()
+    {
 
         $this->edit = !$this->edit;
-
     }
 
 
