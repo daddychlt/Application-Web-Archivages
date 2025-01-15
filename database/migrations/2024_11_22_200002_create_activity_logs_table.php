@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description'); // Ex: "Rapport_2024.pdf"
             $table->string('icon')->nullable(); // Pour les emojis ou icônes
             $table->unsignedBigInteger('user_id')->nullable(); // Optionnel, pour lier l'action à un utilisateur
+            $table->boolean('confidentiel');
             $table->timestamps();
         });
 
