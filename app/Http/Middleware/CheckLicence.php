@@ -25,8 +25,6 @@ class CheckLicence
 
         // Vérifier si la licence est verifié
         if (!Licence::isVerified()) {
-
-            dd($request->url());
             // Rediriger vers une page d'erreur ou afficher un message si la licence n'est pas valide
             return redirect()->route('login')->with('error', 'Verifier la licence.');
         }

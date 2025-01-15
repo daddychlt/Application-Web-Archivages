@@ -56,7 +56,7 @@ class ServiceController extends Controller
     {
         $service = Service::findOrFail($id);
         $users = User::all();
-        $users_tag = User::where('id', '!=', Auth::id()) ->whereDoesntHave('role', function ($query) { $query->where('nom', 'SuperAdministrateur'); }) ->get();
+        $users_tag = User::where('id', '!=', Auth::id())->whereDoesntHave('role', function ($query) { $query->where('nom', 'SuperAdministrateur'); }) ->get();
 
         return view('service.show', compact('service', 'users', 'users_tag'));
     }
