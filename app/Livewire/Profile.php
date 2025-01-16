@@ -29,6 +29,8 @@ class Profile extends Component
             ->where('user_id', Auth::user()->id)
             ->get();
 
+        session()->flash('success', 'Informations modifiées avec succès.');
+
         return view('livewire.profile', ['sessions' => $sessions]);
     }
 }
