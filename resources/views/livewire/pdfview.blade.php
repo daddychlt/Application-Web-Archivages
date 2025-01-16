@@ -27,7 +27,7 @@
                         <iframe src="{{ asset('storage/' . $document->filename) }}"
                             class="w-full h-[500px] border-none rounded-bl-lg"></iframe>
                     @else
-                        <iframe src="https://docs.google.com/gview?url={{ asset('storage/' . $document->filename) }}&embedded=true"
+                        <iframe src="{{ asset('storage/preview_' . $document->id . '.pdf') }}"
                             class="w-full h-[500px] border-none rounded-bl-lg">Affichage indisponible</iframe>
                     @endif
                 </div>
