@@ -9,7 +9,7 @@
     <!-- Hero Section -->
     <section class="bg-gradient-to-b from-indigo-600 via-blue-500 to-blue-400 text-white">
         <div class="px-6 mx-auto max-w-screen-xl text-center py-24 lg:py-32">
-            <h1 class="text-5xl font-extrabold mb-6">Bienvenue sur <span class="text-yellow-400">DocArch</span></h1>
+            <h1 class="text-5xl font-extrabold mb-6">Bienvenue sur <span class="text-yellow-400">DCTC-eDoc</span></h1>
             <p class="text-lg font-light mb-8 sm:px-16 lg:px-32">
                 Votre espace dédié pour une gestion efficace et sécurisée de vos documents numériques !
             </p>
@@ -88,7 +88,7 @@
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-gray-300 text-center py-6 w-full">
-        <p>&copy; 2024 DocArch - Tous droits réservés.</p>
+        <p>&copy; 2025 DCTC-eDoc - Tous droits réservés.</p>
         <p>Nos contacts <a href="https://www.dctc-ci.com/" class="text-gray-400 hover:underline hover:text-gray-200">dctc-ci.com</a> - <a class="text-gray-400 hover:underline hover:text-gray-200">info@dctc-ci.com</a> </p>
     </footer>
 </x-app-layout>

@@ -35,12 +35,29 @@
                 </li>
             </ol>
         </div>
-        @livewire('document-search', ['service' => $service])
+        @if (!empty($service))
+            @livewire('document-search', ['service' => $service])
+        @else
+            @livewire('document-search', ['service' => null])
+        @endif
 
     </x-slot>
 
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if (!empty($service))
+                <button data-modal-target="static-modal-doc" data-modal-toggle="static-modal-doc" type="button"
+                    class=" inline-flex space-x-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                        viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 12h14m-7 7V5" />
+                    </svg>
+                    <span>Ajouter un document</span>
+                </button>
+            @endif
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg pr-8 pl-8 pt-5 pb-5">
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg pt-5 pb-5">
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -201,9 +218,22 @@
         </div>
     </div>
 
+    <!-- Modal body ajouter dcument-->
+        <!-- Main modal -->
+    <div id="static-modal-doc" data-modal-backdrop="static" tabindex="-1" aria-hidden="true"
+        class="hidden overflow-y-scroll overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-2xl max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <!-- Modal header -->
+                @livewire('add-doc-serv', ['service' => $service])
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-gray-800 text-gray-300 text-center py-6 w-full">
-        <p>&copy; 2024 DocArch - Tous droits réservés.</p>
+        <p>&copy; 2025 DCTC-eDoc - Tous droits réservés.</p>
         <p>Nos contacts <a href="https://www.dctc-ci.com/"
                 class="text-gray-400 hover:underline hover:text-gray-200">dctc-ci.com</a> - <a
                 class="text-gray-400 hover:underline hover:text-gray-200">info@dctc-ci.com</a> </p>

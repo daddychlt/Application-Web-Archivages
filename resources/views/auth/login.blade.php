@@ -1,7 +1,9 @@
 <x-guest-layout>
     <x-authentication-card>
         <x-slot name="logo">
-            <x-authentication-card-logo />
+            <a href="/">
+                <img src="{{ asset('storage/img/5-1.png') }}" alt="logo" class=" w-40 h-40 mx-auto">
+            </a>
         </x-slot>
 
         <style>
@@ -59,8 +61,8 @@
 
             <div>
                 <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required
-                    autofocus autocomplete="username" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
+                    required autofocus autocomplete="username" />
             </div>
 
             <div class="mt-4">
@@ -157,7 +159,8 @@
                         <!-- Modal body -->
                         <div class="p-4 md:p-5 space-y-4 flex-grow">
                             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                Votre licence a expiré. Pour continuer à utiliser cette application, veuillez renouveller votre licence.
+                                Votre licence a expiré. Pour continuer à utiliser cette application, veuillez
+                                renouveller votre licence.
                             </p>
 
                             <div class="mt-4 text-center">
