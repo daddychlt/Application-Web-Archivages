@@ -28,8 +28,8 @@
                             <span
                                 class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{{ __('Service ') . $service->nom }}</span>
                         @else
-                            <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Documents
-                                generaux</span>
+                            <span
+                                class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">Depôts</span>
                         @endif
                     </div>
                 </li>
@@ -47,16 +47,18 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if (!empty($service))
-                <button data-modal-target="static-modal-doc" data-modal-toggle="static-modal-doc" type="button"
-                    class=" inline-flex space-x-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                    <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                        viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M5 12h14m-7 7V5" />
-                    </svg>
-                    <span>Ajouter un document</span>
-                </button>
+                @if ((Auth::user()->role->nom == 'SuperAdministrateur') | (Auth::user()->role->nom == 'Administrateur'))
+                    <button data-modal-target="static-modal-doc" data-modal-toggle="static-modal-doc" type="button"
+                        class=" inline-flex space-x-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                            viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 12h14m-7 7V5" />
+                        </svg>
+                        <span>Ajouter un document</span>
+                    </button>
+                @endif
             @endif
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg pr-8 pl-8 pt-5 pb-5">
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg pt-5 pb-5">

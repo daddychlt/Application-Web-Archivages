@@ -77,12 +77,12 @@
                         <button
                             class="flex flex-col items-center w-full p-4 bg-white rounded-lg shadow hover:shadow-md transition">
                             <a href="{{ route('show_docs', 0) }}">
-                                <svg class="w-12 h-12 text-yellow-500" xmlns="http://www.w3.org/2000/svg"
+                                <svg class="w-12 h-12 text-red-500" xmlns="http://www.w3.org/2000/svg"
                                     fill="currentColor" viewBox="0 0 24 24">
                                     <path
                                         d="M10 4a2 2 0 0 1 1.414.586L13 6h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5Z" />
                                 </svg>
-                                <span class="mt-2 text-sm font-medium text-gray-700">Documents generaaux</span>
+                                <span class="mt-2 text-sm font-medium text-gray-700">Depôts</span>
                             </a>
                         </button>
                     </div>
