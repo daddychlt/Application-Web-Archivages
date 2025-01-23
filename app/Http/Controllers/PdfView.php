@@ -31,13 +31,6 @@ class PdfView extends Controller
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
             $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Dompdf');
             $writer->save('php://output');
-        } elseif (in_array($type, ['ppt', 'pptx'])) {
-            // Conversion PowerPoint -> PDF
-            $pptReader = new \PhpOffice\PhpPresentation\Reader\PowerPoint2007();
-            $presentation = $pptReader->load($filePath);
-
-            $pdfWriter = \PhpOffice\PhpPresentation\IOFactory::createWriter($presentation, 'PDF');
-            $pdfWriter->save('php://output');
         }
 
         return ob_get_clean();
@@ -50,7 +43,7 @@ class PdfView extends Controller
         $fileType = $document->type;
 
         // Vérifiez si le type de fichier nécessite une conversion
-        if (in_array($document->type, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv'])) {
+        if (in_array($document->type, ['doc', 'docx', 'xls', 'xlsx', 'csv'])) {
 
             $pdfContent = $this->convertToPdf($filePath, $fileType);
 

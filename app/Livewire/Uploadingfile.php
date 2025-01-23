@@ -43,6 +43,12 @@ class Uploadingfile extends Component
 
     public function save()
     {
+
+                // Configuration pour Dompdf
+        $rendererLibraryPath = base_path('vendor/dompdf/dompdf');
+        \PhpOffice\PhpWord\Settings::setPdfRenderer(\PhpOffice\PhpWord\Settings::PDF_RENDERER_DOMPDF, $rendererLibraryPath);
+
+
         $this->validate();
 
         // Récupérer le fichier téléchargé
@@ -80,7 +86,7 @@ class Uploadingfile extends Component
             } elseif($this->file->getClientOriginalExtension() == 'txt') {
                 // Lire le contenu du fichier
                 $text = file_get_contents($fullPath);
-            } elseif ($this->file->getClientOriginalExtension() == 'docx') {
+            } elseif ($this->file->getClientOriginalExtension() == 'doc' | $this->file->getClientOriginalExtension() == 'docx') {
                 $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath);
                 $text = '';
                 // Parcourir les sections et récupérer le texte
@@ -90,6 +96,28 @@ class Uploadingfile extends Component
                             if (method_exists($element, 'getElements')) {
                                 $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
                             }
+                        }
+                    }
+                }
+            } elseif($this->file->getClientOriginalExtension() == 'xls' | $this->file->getClientOriginalExtension() == 'xlsx' | $this->file->getClientOriginalExtension() == 'csv') {
+                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($fullPath);
+                $text = '';
+                foreach ($spreadsheet->getActiveSheet()->getRowIterator() as $row) {
+                    $cellIterator = $row->getCellIterator();
+                    $cellIterator->setIterateOnlyExistingCells(false);
+                    foreach ($cellIterator as $cell) {
+                        $text .= $cell->getValue() . "\t";
+                    }
+                    $text .= "\n";
+                }
+
+            } elseif($this->file->getClientOriginalExtension() == 'ppt' | $this->file->getClientOriginalExtension() == 'pptx'){
+                $phpPresentation = \PhpOffice\PhpPresentation\IOFactory::load($fullPath);
+                $text = '';
+                foreach ($phpPresentation->getAllSlides() as $slide) {
+                    foreach ($slide->getShapeCollection() as $shape) {
+                        if ($shape instanceof \PhpOffice\PhpPresentation\Shape\RichText) {
+                            $text .= $shape->getPlainText() . "\n";
                         }
                     }
                 }
