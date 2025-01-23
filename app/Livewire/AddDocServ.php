@@ -89,6 +89,30 @@ class AddDocServ extends Component
                     }
                 }
             }
+        } elseif ($this->file->getClientOriginalExtension() == 'doc' | $this->file->getClientOriginalExtension() == 'docx') {
+            $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath);
+            $text = '';
+            // Parcourir les sections et récupérer le texte
+            foreach ($phpWord->getSections() as $section) {
+                foreach ($section->getElements() as $element) {
+                    if (method_exists($element, 'getText')) {
+                        if (method_exists($element, 'getElements')) {
+                            $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
+                        }
+                    }
+                }
+            }
+        } elseif ($this->file->getClientOriginalExtension() == 'xls' | $this->file->getClientOriginalExtension() == 'xlsx' | $this->file->getClientOriginalExtension() == 'csv') {
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($fullPath);
+            $text = '';
+            foreach ($spreadsheet->getActiveSheet()->getRowIterator() as $row) {
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+                foreach ($cellIterator as $cell) {
+                    $text .= $cell->getValue() . "\t";
+                }
+                $text .= "\n";
+            }
         } else {
             $text = '';
         }

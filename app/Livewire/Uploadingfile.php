@@ -110,17 +110,6 @@ class Uploadingfile extends Component
                     }
                     $text .= "\n";
                 }
-
-            } elseif($this->file->getClientOriginalExtension() == 'ppt' | $this->file->getClientOriginalExtension() == 'pptx'){
-                $phpPresentation = \PhpOffice\PhpPresentation\IOFactory::load($fullPath);
-                $text = '';
-                foreach ($phpPresentation->getAllSlides() as $slide) {
-                    foreach ($slide->getShapeCollection() as $shape) {
-                        if ($shape instanceof \PhpOffice\PhpPresentation\Shape\RichText) {
-                            $text .= $shape->getPlainText() . "\n";
-                        }
-                    }
-                }
             } else {
                 $text = '';
             }
