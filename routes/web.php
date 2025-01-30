@@ -27,21 +27,21 @@ Route::middleware([
 })->group(function () {
     Route::post('/service/store', [ServiceController::class, 'store'])->middleware('checklicence')->name('service.store');
 })->group(function () {
-    Route::get('/utilisateur', [UserController::class, 'index'])->middleware('checklicence')->name('user');
+    Route::get('/utilisateur', [UserController::class, 'index'])->middleware('checklicence', 'checkrole')->name('user');
 })->group(function () {
     Route::get('/service/{id}', [ServiceController::class, 'show'])->middleware('checklicence')->name('service.show');
 })->group(function () {
-    Route::get('/utilisateur/{id}', [UserController::class, 'show'])->middleware('checklicence')->name('user.show');
+    Route::get('/utilisateur/{id}', [UserController::class, 'show'])->middleware('checklicence', 'checkrole')->name('user.show');
 })->group(function () {
-    Route::post('/utilisateur/store', [UserController::class, 'store'])->middleware('checklicence')->name('user.store');
+    Route::post('/utilisateur/store', [UserController::class, 'store'])->middleware('checklicence', 'checkrole')->name('user.store');
 })->group(function () {
-    Route::post('/utilisateur/store_role', [UserController::class, 'store_role'])->middleware('checklicence')->name('user.store_role');
+    Route::post('/utilisateur/store_role', [UserController::class, 'store_role'])->middleware('checklicence', 'checkrole')->name('user.store_role');
 })->group(function () {
-    Route::get('/utilisateur/{id}/edit', [UserController::class, 'edit'])->middleware('checklicence')->name('users.edit');
+    Route::get('/utilisateur/{id}/edit', [UserController::class, 'edit'])->middleware('checklicence', 'checkrole')->name('users.edit');
 })->group(function () {
-    Route::put('/utilisateur/{id}', [UserController::class, 'update'])->middleware('checklicence')->name('users.update');
+    Route::put('/utilisateur/{id}', [UserController::class, 'update'])->middleware('checklicence', 'checkrole')->name('users.update');
 })->group(function () {
-    Route::delete('/utilisateur/{id}', [UserController::class, 'destroy'])->middleware('checklicence')->name('users.destroy');
+    Route::delete('/utilisateur/{id}', [UserController::class, 'destroy'])->middleware('checklicence', 'checkrole')->name('users.destroy');
 })->group(function () {
     Route::get('/document', [DocumentController::class, 'index'])->middleware('checklicence')->name('document');
 })->group(function () {
