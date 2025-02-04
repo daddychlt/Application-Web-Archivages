@@ -33,9 +33,9 @@ class HistoryController extends Controller
 
 
         if ($user->role->nom == "SuperAdministrateur" | $user->role->nom == "Administrateur") {
-            $activities = ActivityLog::paginate(10);
+            $activities = ActivityLog::latest()->paginate(10);
         } else {
-            $activities = ActivityLog::whereIn('description', $service->documents()->pluck('nom'))->where(function (Builder $query) use ($user) {
+            $activities = ActivityLog::latest()->whereIn('description', $service->documents()->pluck('nom'))->where(function (Builder $query) use ($user) {
                 $query->whereIn('description', $user->confidentialite()->pluck('nom'))->orWhere('confidentiel', false);
             })->paginate(10); // Les 3 dernières actions
         };
