@@ -96,7 +96,6 @@ class User extends Authenticatable
     public function confidentialite()
     {
         return $this->belongsToMany(Document::class, 'document_users_conf', 'user_id', 'doc_id')->withTimestamps();
-        ;
     }
 
 }

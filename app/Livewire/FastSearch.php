@@ -26,13 +26,22 @@ class FastSearch extends Component
         if (strlen($this->query) == 0) {
             $documents = [];
         } else {
-            if($user->role->nom === "SuperAdministrateur" | $user->role->nom === "Administrateur")
-            {
-                $documents = Document::search(query:$this->query)->get();
-            } else{
-                $alldocuments = Document::search($this->query)->get();
+            if ($user->role->nom === "SuperAdministrateur" | $user->role->nom === "Administrateur") {
+                $query = $this->query;
+                $documents = Document::search($query, function ($meilisearch, $query, $options) {
+                    $options['matchingStrategy'] = 'all';
+                    return $meilisearch->search($query, $options);
+                })->get();
+            } else {
+                $query = $this->query;
+                $alldocuments = Document::search($query, function ($meilisearch, $query, $options) {
+                    $options['matchingStrategy'] = 'all';
+                    return $meilisearch->search($query, $options);
+                })->get();
                 $service = $user->service;
-                $documents_service = $alldocuments->filter(function ($document) use ($service) { return $document->services->contains($service); });
+                $documents_service = $alldocuments->filter(function ($document) use ($service) {
+                    return $document->services->contains($service);
+                });
                 $documents = $documents_service->where('confidentiel', false);
                 $this->document_autor = $documents_service->whereIn('nom', $user->confidentialite()->pluck('nom'));
             }

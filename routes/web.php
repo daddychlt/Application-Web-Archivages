@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PdfView;
@@ -74,4 +75,8 @@ Route::middleware([
     Route::get('/pdf/{id}', [PdfView::class, 'index'])->middleware('checklicence')->name('pdf.view');
 })->group(function () {
     Route::delete('/document/{id}', [DocumentController::class, 'destroy'])->middleware('checklicence')->name('documents.destroy');
+})->group(function () {
+    Route::get('/historique', [HistoryController::class, 'index'])->middleware('checklicence')->name('history');
+})->group(function () {
+    Route::get('/export-historque-pdf', [HistoryController::class, 'exportPDF'])->middleware('checklicence')->name('history.export');
 });
