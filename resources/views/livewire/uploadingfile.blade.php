@@ -1,4 +1,7 @@
-<div class="relative">
+//uploadingFile.blade.php
+
+<div class="relative overflow-scroll">
+
 
     <style>
         #result {
@@ -31,6 +34,7 @@
     </div>
     <!-- Modal body -->
     <div class="p-6 md:p-8 bg-gray-50 dark:bg-gray-800 shadow-md rounded-lg space-y-6">
+
         <form wire:submit="save" class="max-w-lg mx-auto space-y-6">
             <!-- File Selection Section -->
             <div class="space-y-4">
@@ -38,15 +42,43 @@
                     Sélectionner un fichier
                 </label>
                 <div class="flex items-center gap-4">
-                    <!-- File Input -->
-                    <input wire:model="file"
-                        class="block w-2/3 text-sm text-gray-900 border rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                        id="file_input" type="file" accept="application/pdf, text/csv, application/application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, text/plain, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"  required />
+                    <div class="max-w-lg mx-auto" style="width: 100% ; text-align:center">
+                        <!-- Zone de Drag & Drop -->
+                        <div id="dropzone"
+                            class="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center transition-all border-gray-300 w-full">
+                            <input type="file" id="upload" class="hidden" wire:model="file">
+                            <label for="upload" class="cursor-pointer text-gray-500 hover:text-blue-500">
+                                <svg class="w-full h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor"
+                                    stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M7 16V12m10 4v-4m-5 4V4m-4 4l4-4m0 0l4 4M3 20h18" />
+                                </svg>
+                                <p class="mt-2">Glissez-déposez un fichier ou un dossier ici<br>ou cliquez pour
+                                    sélectionner</p>
+                            </label>
+                        </div>
+
+                        @if ($file)
+                            <div class="mt-4 p-4 border rounded-lg bg-gray-50">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">{{ $file->getClientOriginalName() }}</span>
+                                    <a href="#" wire:click="removeFile"
+                                        class="text-red-500 hover:text-red-700">&times;</a>
+                                </div>
+
+
+
+                                @if (session()->has('message'))
+                                    <p class="text-green-600 mt-2">{{ session('message') }}</p>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+
+                    <img src="" class="mt-4 mx-auto max-h-40 hidden" id="preview">
+
                 </div>
-                <button id="reset_button" type="button"
-                    class="mt-2 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
-                    Réinitialiser le fichier
-                </button>
+
                 <p class="text-sm text-gray-500 dark:text-gray-400">
                     Fichiers valides : Image(PNG, JPEG), Text, PDF, Word, Excel, CSV, PowerPoint
                 </p>
@@ -54,13 +86,13 @@
 
             <!-- Loading Indicator -->
             <div>
-                <svg wire:loading wire:target="file"
-                    class="w-5 h-5 text-gray-300 animate-spin dark:text-gray-600 fill-blue-500" viewBox="0 0 100 101"
-                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591..." fill="currentColor" />
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116..." fill="currentFill" />
-                </svg>
-                <span class="sr-only">Chargement...</span>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-2" wire:loading wire:target="file">
+                    <!-- Barre de progression avec Alpine.js -->
+                    <div id="progress" class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                        style="width: 0%;"></div>
+                    <!-- Affichage du pourcentage -->
+                    <p id="progressText" class="text-sm text-gray-600 mt-1">0%</p>
+                </div>
             </div>
 
             <!-- Error Display -->
@@ -84,7 +116,7 @@
                     Mot clé de recherche
                 </label>
                 <input wire:model="mot_cle" id="mot_cle" name="mot_cle"
-                    class="block w-2/3 text-sm text-gray-900 border rounded-lg bg-gray-50 dark:text-gray-400 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+                    class="block w-full text-sm text-gray-900 border rounded-lg bg-gray-50 dark:text-gray-400 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
                     type="text" />
                 @error('mot_cle')
                     <div class="flex items-center text-sm text-red-500">
@@ -229,38 +261,126 @@
         </form>
     </div>
 
+
     <script>
-        // Réinitialiser le champ de fichier
-        const fileInput = document.getElementById('file_input');
-        const closeButton = document.getElementById('close_button');
-        const annulButton = document.getElementById('annul_button');
-        const resetButton = document.getElementById('reset_button');
-        const divError = document.getElementById('div_error');
-
-        closeButton.addEventListener('click', () => {
-            fileInput.value = ''; // Réinitialise la valeur
-            if (divError) {
-                divError.innerHTML = ""; // Supprimer le contenu
-                divError.style.display = "none"; // Optionnel: cacher l'élément
+        // Lorsque l'upload démarre, réinitialise la barre à 0%
+        document.addEventListener('livewire-upload-start', () => {
+            const progressElem = document.getElementById('progress');
+            const progressText = document.getElementById('progressText');
+            if (progressElem) {
+                progressElem.style.width = '0%';
+            }
+            if (progressText) {
+                progressText.textContent = '0%';
             }
         });
 
-        resetButton.addEventListener('click', () => {
-            fileInput.value = ''; // Réinitialise la valeur
-        });
-
-        annulButton.addEventListener('click', () => {
-            fileInput.value = ''; // Réinitialise la valeur
-            if (divError) {
-                divError.innerHTML = ""; // Supprimer le contenu
-                divError.style.display = "none"; // Optionnel: cacher l'élément
+        // Met à jour la barre en fonction de la progression (Livewire envoie event.detail.progress)
+        document.addEventListener('livewire-upload-progress', event => {
+            const progress = event.detail.progress; // Progression en pourcentage (0 à 100)
+            const progressElem = document.getElementById('progress');
+            const progressText = document.getElementById('progressText');
+            if (progressElem) {
+                progressElem.style.width = progress + '%';
+            }
+            if (progressText) {
+                progressText.textContent = progress + '%';
             }
         });
 
-        // Optionnel : montrer un message si l'utilisateur essaie de changer de fichier
-        fileInput.addEventListener('change', () => {
-            console.log('Fichier sélectionné :', fileInput.files[0]?.name);
+        // Une fois l'upload terminé, positionne la barre à 100%
+        document.addEventListener('livewire-upload-finish', () => {
+            const progressElem = document.getElementById('progress');
+            const progressText = document.getElementById('progressText');
+            if (progressElem) {
+                progressElem.style.width = '100%';
+            }
+            if (progressText) {
+                progressText.textContent = '100%';
+            }
+        });
+
+        // En cas d'erreur, réinitialise la barre à 0%
+        document.addEventListener('livewire-upload-error', () => {
+            const progressElem = document.getElementById('progress');
+            const progressText = document.getElementById('progressText');
+            if (progressElem) {
+                progressElem.style.width = '0%';
+            }
+            if (progressText) {
+                progressText.textContent = '0%';
+            }
         });
     </script>
+
+    <script>
+        // Gestion du Drag & Drop
+        const dropzone = document.getElementById('dropzone');
+        const input = document.getElementById('upload');
+
+        // Gestion des événements de glisser-déposer
+        ['dragover', 'dragleave', 'drop'].forEach(event => {
+            dropzone.addEventListener(event, preventDefaults);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Mise à jour des styles
+        ['dragover'].forEach(event => {
+            dropzone.addEventListener(event, () => {
+                dropzone.classList.add('border-indigo-600');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(event => {
+            dropzone.addEventListener(event, () => {
+                dropzone.classList.remove('border-indigo-600');
+            });
+        });
+
+        // Gestion du dépôt de fichier
+        dropzone.addEventListener('drop', handleDrop);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(files[0]);
+                input.files = dataTransfer.files;
+
+                // Déclenche l'événement Livewire
+                const changeEvent = new Event('change', {
+                    bubbles: true
+                });
+                input.dispatchEvent(changeEvent);
+            }
+        }
+
+        // Gestion du clic sur la zone
+        dropzone.addEventListener('click', () => {
+            input.click();
+        });
+
+        // Prévisualisation des images
+        input.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('preview');
+                    preview.src = event.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+
 
 </div>

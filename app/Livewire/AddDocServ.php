@@ -22,6 +22,7 @@ class AddDocServ extends Component
     public $service_id = [];
     public $users_confidence = [];
     public $confidence = false;
+    public $progress = 0;
 
     protected $rules = [
         'mot_cle' => 'string',
