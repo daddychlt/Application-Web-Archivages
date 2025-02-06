@@ -42,7 +42,7 @@
                         <!-- Zone de Drag & Drop -->
                         <div id="dropzone"
                             class="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center transition-all border-gray-300 w-full">
-                            <input type="file" id="upload" class="hidden" wire:model="file">
+                            <input type="file" id="upload" class="hidden " wire:model="file"  >
                             <label for="upload" class="cursor-pointer text-gray-500 hover:text-blue-500">
                                 <svg class="w-full h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor"
                                     stroke-width="2" viewBox="0 0 24 24">
@@ -112,7 +112,7 @@
                     Mot clé de recherche
                 </label>
                 <input wire:model="mot_cle" id="mot_cle" name="mot_cle"
-                    class="block w-2/3 text-sm text-gray-900 border rounded-lg bg-gray-50 dark:text-gray-400 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+                    class="block w-full text-sm text-gray-900 border rounded-lg bg-gray-50 dark:text-gray-400 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
                     type="text" />
                 @error('mot_cle')
                     <div class="flex items-center text-sm text-red-500">
