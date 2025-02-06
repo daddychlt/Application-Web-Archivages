@@ -1,5 +1,3 @@
-//uploadingFile.blade.php
-
 <div class="relative overflow-scroll">
 
 

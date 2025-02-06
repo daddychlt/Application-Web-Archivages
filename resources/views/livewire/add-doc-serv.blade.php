@@ -1,5 +1,3 @@
-//add-doc.-sev.blade.php
-
 <div class="relative">
 
     <style>
