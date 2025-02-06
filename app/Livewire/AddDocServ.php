@@ -141,6 +141,7 @@ class AddDocServ extends Component
                 $document->confidentialite()->attach($user);
             }
         }
+        
 
         // Lors de l'ajout d'un document
         ActivityLog::create([
@@ -152,6 +153,11 @@ class AddDocServ extends Component
         ]);
 
         return redirect()->route('document')->with('success', 'Le fichier a été téléchargé avec succès sous le nom de ' . $newName);
+    }
+
+    public function removeFile()
+    {
+        $this->reset('file', 'progress');
     }
 
     public function render()

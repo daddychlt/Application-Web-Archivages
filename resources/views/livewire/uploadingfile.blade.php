@@ -61,7 +61,8 @@
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-700">{{ $file->getClientOriginalName() }}</span>
                                     <a href="#" wire:click="removeFile"
-                                        class="text-red-500 hover:text-red-700">&times;</a>
+                                        class="text-red-500 hover:text-red-700" wire:loading.style="display:none">&times;
+                                    </a>
                                 </div>
 
 
