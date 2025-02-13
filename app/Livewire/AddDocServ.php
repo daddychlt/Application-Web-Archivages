@@ -16,7 +16,7 @@ class AddDocServ extends Component
 {
     use WithFileUploads;
 
-    #[Validate('required|file|mimes:txt,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,png,jpeg|max:10240')]
+    #[Validate('required|file|mimes:txt,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,png,jpeg|max:51200')]
     public $file;
     public $mot_cle;
     public $service_id = [];
