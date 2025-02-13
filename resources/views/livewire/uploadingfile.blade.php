@@ -20,7 +20,7 @@
         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
             Ajouter un ou plusieurs documents
         </h3>
-        <button id="close_button" type="button"
+        <button id="close_button" type="button" wire:click="removeFile"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-hide="static-modal">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -44,7 +44,7 @@
                         <!-- Zone de Drag & Drop -->
                         <div id="dropzone"
                             class="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center transition-all border-gray-300 w-full">
-                            <input type="file" id="upload" class="hidden" wire:model="file">
+                            <input  type="file" id="upload" class="hidden" wire:model="file">
                             <label for="upload" class="cursor-pointer text-gray-500 hover:text-blue-500">
                                 <svg class="w-full h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor"
                                     stroke-width="2" viewBox="0 0 24 24">
@@ -178,9 +178,10 @@
                     @foreach ($services as $service)
                         <li class=" flex flex-col gap-3 px-3 py-2 border-b dark:border-gray-600">
                             <div>
-                                <input wire:model.live="service_id" id="service-checkbox-{{ $service->id }}"
+                                <input  wire:model.live="service_id" id="service-checkbox-{{ $service->id }}"
                                     type="checkbox" value="{{ $service->id }}"
-                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600" />
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 serviceCheck"
+                                    {{ $service->id == $service_id ? 'checked' : '' }} />
                                 <label for="service-checkbox-{{ $service->id }}"
                                     class="text-gray-900 dark:text-gray-300">
                                     {{ $service->nom }}
@@ -339,7 +340,7 @@
                 dropzone.classList.remove('border-indigo-600');
             });
         });
-
+        
         // Gestion du dépôt de fichier
         dropzone.addEventListener('drop', handleDrop);
 
@@ -360,10 +361,16 @@
             }
         }
 
-        // Gestion du clic sur la zone
-        dropzone.addEventListener('click', () => {
-            input.click();
+      let close_button = document.getElementById('close_button')
+      close_button.addEventListener('click', function(){
+         // Sélectionne toutes les cases à cocher ayant l'ID qui commence par "service-checkbox-"
+         let checkboxes = document.querySelectorAll("input[type='checkbox'][id^='service-checkbox-']");
+        
+        // Boucle sur chaque case et la décoche
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
         });
+      })
 
         // Prévisualisation des images
         input.addEventListener('change', function(e) {

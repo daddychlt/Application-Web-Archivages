@@ -44,6 +44,21 @@
             /* Taille de police relative */
         }
 
+        .grossirDrag {
+            
+            background-color: rgba(175, 164, 164, 0.6);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 482.14 482.14"><g><path d="M302.599,0H108.966C80.66,0,57.652,23.025,57.652,51.315v379.509c0,28.289,23.008,51.315,51.314,51.315h264.205 c28.275,0,51.316-23.026,51.316-51.315V121.449L302.599,0z M373.171,450.698H108.966c-10.969,0-19.89-8.905-19.89-19.874V51.315 c0-10.953,8.921-19.858,19.89-19.858l181.875-0.189v67.218c0,19.653,15.949,35.603,35.588,35.603l65.877-0.189l0.725,296.925 C393.03,441.793,384.142,450.698,373.171,450.698z"/><path d="M241.054,150.96c-49.756,0-90.102,40.347-90.102,90.109c0,49.764,40.346,90.11,90.102,90.11 c49.771,0,90.117-40.347,90.117-90.11C331.171,191.307,290.825,150.96,241.054,150.96z M273.915,253.087h-20.838v20.835 c0,6.636-5.373,12.017-12.023,12.017c-6.619,0-12.01-5.382-12.01-12.017v-20.835H208.21c-6.637,0-12.012-5.383-12.012-12.018 c0-6.634,5.375-12.017,12.012-12.017h20.834v-20.835c0-6.636,5.391-12.018,12.01-12.018c6.65,0,12.023,5.382,12.023,12.018v20.835 h20.838c6.635,0,12.008,5.383,12.008,12.017C285.923,247.704,280.55,253.087,273.915,253.087z"/></g></svg>');
+            background-repeat: no-repeat;
+            background-size: 50px 50px; /* ou cover selon besoin */
+            background-position: center;
+            z-index: 1;
+        }
+        .grossirDrag * {
+         opacity: 0.5; /* Rend les éléments enfants transparents */
+        }
+
+
+
         /* Media query pour les écrans plus grands */
         @media (min-width: 768px) {
             #toast-success {
@@ -90,15 +105,17 @@
                 @if ((Auth::user()->role->nom == 'SuperAdministrateur') | (Auth::user()->role->nom == 'Administrateur'))
                     @foreach ($services as $service)
                         <div>
-                            <button
-                                class="flex flex-col items-center w-full p-4 bg-white rounded-lg shadow hover:shadow-md transition">
+                            <button 
+                                class="iconButton flex flex-col items-center w-full p-4 bg-white rounded-lg shadow hover:shadow-md transition"
+                                data-service-id="{{ $service->id }}"
+                                >
                                 <a href="{{ route('show_docs', $service->id) }}">
-                                    <svg class="w-12 h-12 text-yellow-500" xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-12 h-12 text-yellow-500 iconFile" xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor" viewBox="0 0 24 24"> +
                                         <path
                                             d="M10 4a2 2 0 0 1 1.414.586L13 6h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5Z" />
                                     </svg>
-                                    <span class="mt-2 text-sm font-medium text-gray-700">{{ $service->nom }}</span>
+                                    <span class="mt-2 text-sm font-medium text-gray-700">{{ $service->nom }} </span>
                                 </a>
                             </button>
                         </div>
@@ -122,7 +139,7 @@
                             <button
                                 class="flex flex-col items-center w-full p-4 bg-white rounded-lg shadow hover:shadow-md transition">
                                 <a href="{{ route('show_docs', $serv->id) }}">
-                                    <svg class="w-12 h-12 text-yellow-500" xmlns="http://www.w3.org/2000/svg"
+                                    <svg class=" text-yellow-500" xmlns="http://www.w3.org/2000/svg" style=""
                                         fill="currentColor" viewBox="0 0 24 24">
                                         <path
                                             d="M10 4a2 2 0 0 1 1.414.586L13 6h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5Z" />
@@ -161,7 +178,7 @@
                     <!-- Ajouter un document -->
                     <li>
                         <a data-modal-target="static-modal" data-modal-toggle="static-modal"
-                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-green-200 dark:hover:bg-gray-700 group">
+                            class="flex items-center openModalDoc p-2 text-gray-900 rounded-lg dark:text-white hover:bg-green-200 dark:hover:bg-gray-700 group">
                             <svg class="flex-shrink-0 w-5 h-5 text-green-500 transition duration-75 group-hover:text-green-900 dark:text-gray-400 dark:group-hover:text-white"
                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                 <path fill-rule="evenodd"
@@ -453,7 +470,9 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-gray-300 text-center py-6 w-full">
         <p>&copy; 2025 DCTC-eDoc - Tous droits réservés.</p>
-        <p>Nos contacts <a href="https://www.dctc-ci.com/" class="text-gray-400 hover:underline hover:text-gray-200">dctc-ci.com</a> - <a class="text-gray-400 hover:underline hover:text-gray-200">info@dctc-ci.com</a> </p>
+        <p>Nos contacts <a href="https://www.dctc-ci.com/"
+                class="text-gray-400 hover:underline hover:text-gray-200">dctc-ci.com</a> - <a
+                class="text-gray-400 hover:underline hover:text-gray-200">info@dctc-ci.com</a> </p>
     </footer>
 
     <script>
@@ -487,5 +506,66 @@
         }, 5000); // 10000ms = 10 secondes
     </script>
 
+ <!--script qui prend en charge le drag & drop sur un dossier ou service   -->
+<script>
+            // Sélectionne toutes les divs avec la classe .iconFile
+        const dropzoneService = document.querySelectorAll('.iconButton');
+        const openModalDoc= document.querySelector('.openModalDoc');
+
+
+        // Fonction pour empêcher le comportement par défaut
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Gestion des événements pour chaque élément
+        dropzoneService.forEach(element => {
+            ['dragover', 'dragleave', 'drop'].forEach(event => {
+                element.addEventListener(event, preventDefaults);
+            });
+
+            element.addEventListener('dragover', () => {
+                element.classList.add("grossirDrag");
+            });
+
+            element.addEventListener('dragleave', () => {
+                element.classList.remove("grossirDrag");
+            });
+
+            
+            
+
+            element.addEventListener('drop', (e) => {
+                element.classList.remove("grossirDrag");
+                //obtenir le id de service apres un drop
+                let serviceId = element.getAttribute('data-service-id'); // Récupère l'ID
+                openModalDoc.click()
+                e.preventDefault();
+                let checkbox = document.querySelector(`#service-checkbox-${serviceId}`);
+                if (checkbox) {
+                    
+                    checkbox.click() // Ajoute l'attribut checked  
+                    
+                }
+                
+                
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files.length) {
+                    // Simule un "drop" sur `.dropzone`
+                    const dropEvent = new DragEvent("drop", {
+                        bubbles: true,
+                        cancelable: true,
+                        dataTransfer: dt
+                    });
+
+                    dropzone.dispatchEvent(dropEvent);
+                }
+            });
+        });
+
+</script>
 
 </x-app-layout>

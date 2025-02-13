@@ -20,7 +20,7 @@ class DocumentController extends Controller
         // Trouver le service et charger les documents associés
         if ($serviceId == 0) {
             $perPage = request('per_page', 10);
-            $documents = Document::doesntHave('services')->paginate($perPage);
+            $documents = Document::doesntHave('services')->orderBy('created_at', 'desc')->paginate($perPage);
             $users = User::all();
 
             return view('documentShow', compact('documents', 'users', 'users_tag'));
@@ -38,10 +38,10 @@ class DocumentController extends Controller
             $user = User::findOrFail(Auth::user()->id);
 
             if ($user->role->nom == "SuperAdministrateur" | $user->role->nom == "Administrateur") {
-                $documents = $service->documents()->paginate($perPage);
+                $documents = $service->documents()->orderBy('created_at', 'desc')->paginate($perPage);
             } else {
                 // Récupérer les documents associés
-                $documents = $service->documents()->where('confidentiel', false)->orwhereIn('nom', $user->confidentialite()->pluck('nom'))->paginate($perPage);
+                $documents = $service->documents()->where('confidentiel', false)->orwhereIn('nom', $user->confidentialite()->pluck('nom'))->orderBy('created_at', 'desc')->paginate($perPage);
             }
 
             return view('documentShow', compact('documents', 'service', 'users', 'users_tag'));

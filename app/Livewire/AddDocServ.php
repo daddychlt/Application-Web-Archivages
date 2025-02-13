@@ -118,6 +118,8 @@ class AddDocServ extends Component
             $text = '';
         }
 
+        
+
         $mot_cle = $this->mot_cle;
 
         $texts = $text . "\n" . $mot_cle;

@@ -58,7 +58,6 @@
                             <div class="mt-4 p-4 border rounded-lg bg-gray-50">
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-700">{{ $file->getClientOriginalName() }}</span>
-                                    
                                     <a href="#" wire:click="removeFile"
                                         class="text-red-500 hover:text-red-700" wire:loading.style="display:none">&times;
                                     </a>
@@ -367,10 +366,7 @@
             }
         }
 
-        // Gestion du clic sur la zone
-        dropzone.addEventListener('click', () => {
-            input.click();
-        });
+      
 
         // Prévisualisation des images
         input.addEventListener('change', function(e) {

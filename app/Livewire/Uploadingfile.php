@@ -17,7 +17,7 @@ class Uploadingfile extends Component
 {
     use WithFileUploads;
 
-    #[Validate('required|file|mimes:txt,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,png,jpeg|max:10240')]
+    #[Validate('required|file|mimes:txt,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,png,jpeg|max:30240')]
     public $file;
     public $mot_cle;
     public $service_id = [];
@@ -41,6 +41,7 @@ class Uploadingfile extends Component
     {
         $this->services;
     }
+    
 
     public function save()
     {
@@ -64,6 +65,7 @@ class Uploadingfile extends Component
         $newName = $originalName;
         $counter = 1;
 
+       
 
         // Vérifier si un fichier avec ce nom existe déjà
         while (Document::where('nom', $newName)->exists()) {
@@ -114,7 +116,7 @@ class Uploadingfile extends Component
             } else {
                 $text = '';
             }
-
+            
             $mot_cle = $this->mot_cle;
 
             $texts = $text . "\n" . $mot_cle;
