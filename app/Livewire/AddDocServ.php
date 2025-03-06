@@ -69,15 +69,49 @@ class AddDocServ extends Component
         // Le chemin complet du fichier
         $fullPath = storage_path('app/public/' . $path);
 
-        if ($this->file->getClientOriginalExtension() == 'pdf') {
+        if ($this->file->getClientOriginalExtension() == 'pdf' or $this->file->getClientOriginalExtension() == 'PDF') {
             // Parse PDF file and build necessary objects
             $parser = new Parser();
-            $pdf = $parser->parseFile($fullPath);
-            $text = $pdf->getText();
+            ini_set('memory_limit', '-1'); // Désactive la limite de mémoire
+            try{
+               $pdf = $parser->parseFile($fullPath); 
+            }catch(\Exception $e){
+                
+            }
+            
+            
+            
+            // Récupère toutes les pages
+                $pages = $pdf->getPages();
+                
+
+                // Initialiser une variable pour stocker le texte extrait
+                $text = '';
+                $compteError=0;
+                $iteration=0;
+                foreach ($pages as $page) {
+                    // Extraire le texte de chaque page
+                    try{
+                      $text .= $page->getText();  
+                    }catch(\Exception $e){
+                        $text .=''; 
+                        $compteError+=1;
+                    }
+                    $iteration+=1;
+                }
+                //dd('nombre_page='.count($pages).' nombre iteration='.$iteration.' nbre erreur='.$compteError);
+
+          
+
+            
         } elseif ($this->file->getClientOriginalExtension() == 'txt') {
             // Lire le contenu du fichier
-            $text = file_get_contents($fullPath);
-        } elseif ($this->file->getClientOriginalExtension() == 'docx') {
+            try{
+                $text = file_get_contents($fullPath);
+            }catch(\Exception $e){
+                $text='';
+            }
+        }  elseif ($this->file->getClientOriginalExtension() == 'doc' or $this->file->getClientOriginalExtension() == 'docx') {
             $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath);
             $text = '';
             // Parcourir les sections et récupérer le texte
@@ -85,25 +119,42 @@ class AddDocServ extends Component
                 foreach ($section->getElements() as $element) {
                     if (method_exists($element, 'getText')) {
                         if (method_exists($element, 'getElements')) {
-                            $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
+                            try{
+                                $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
+                            }catch(\Exception $e){
+                                $text .='';
+                            }
+                            
                         }
                     }
                 }
             }
-        } elseif ($this->file->getClientOriginalExtension() == 'doc' | $this->file->getClientOriginalExtension() == 'docx') {
-            $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath);
+        }elseif ($this->file->getClientOriginalExtension() == 'pptx' || $this->file->getClientOriginalExtension() == 'ppt') {
             $text = '';
-            // Parcourir les sections et récupérer le texte
-            foreach ($phpWord->getSections() as $section) {
-                foreach ($section->getElements() as $element) {
-                    if (method_exists($element, 'getText')) {
-                        if (method_exists($element, 'getElements')) {
-                            $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
+
+                $objReader = \PhpOffice\PhpPresentation\IOFactory::createReader('PowerPoint2007');
+                $presentation = $objReader->load($fullPath);
+        
+                foreach ($presentation->getAllSlides() as $slide) {
+                    foreach ($slide->getShapeCollection() as $shape) {
+                        if ($shape instanceof \PhpOffice\PhpPresentation\Shape\RichText) {
+                            foreach ($shape->getParagraphs() as $paragraph) {
+                                foreach ($paragraph->getRichTextElements() as $element) {
+                                    try {
+                                        if ($element instanceof \PhpOffice\PhpPresentation\Shape\RichText\TextElement) {
+                                            $text .= $element->getText() . "\n";
+                                        }
+                                    } catch (\Exception $e) {
+                                        continue; // Ignore l'erreur et passe à l'élément suivant
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-            }
-        } elseif ($this->file->getClientOriginalExtension() == 'xls' | $this->file->getClientOriginalExtension() == 'xlsx' | $this->file->getClientOriginalExtension() == 'csv') {
+           
+        }
+         elseif ($this->file->getClientOriginalExtension() == 'xls' | $this->file->getClientOriginalExtension() == 'xlsx' | $this->file->getClientOriginalExtension() == 'csv') {
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($fullPath);
             $text = '';
             foreach ($spreadsheet->getActiveSheet()->getRowIterator() as $row) {
@@ -154,7 +205,7 @@ class AddDocServ extends Component
             'confidentiel' => $this->confidence,
         ]);
 
-        return redirect()->route('document')->with('success', 'Le fichier a été téléchargé avec succès sous le nom de ' . $newName);
+        return redirect()->route('show_docs', $this->service->id)->with('success', 'Le fichier a été téléchargé avec succès sous le nom de ' . $newName);
     }
 
     public function removeFile()

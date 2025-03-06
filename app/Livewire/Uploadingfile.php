@@ -91,11 +91,13 @@ class Uploadingfile extends Component
             if ($this->file->getClientOriginalExtension() == 'pdf' or $this->file->getClientOriginalExtension() == 'PDF') {
                 // Parse PDF file and build necessary objects
                 $parser = new Parser();
+                ini_set('memory_limit', '512M');
                 
                 try{
                    $pdf = $parser->parseFile($fullPath); 
+
                 }catch(\Exception $e){
-                    dd("error");
+                    dd("Erreur lors de la lecture du fichier PDF : " . $e->getMessage());
                 }
                 
                 
@@ -118,7 +120,7 @@ class Uploadingfile extends Component
                         }
                         $iteration+=1;
                     }
-                    dd('nombre_page='.count($pages).' nombre iteration='.$iteration.' nbre erreur='.$compteError);
+                    //dd('nombre_page='.count($pages).' nombre iteration='.$iteration.' nbre erreur='.$compteError);
 
               
 
@@ -131,7 +133,7 @@ class Uploadingfile extends Component
                     $text='';
                 }
                 
-            } elseif ($this->file->getClientOriginalExtension() == 'doc' | $this->file->getClientOriginalExtension() == 'docx') {
+            } elseif ($this->file->getClientOriginalExtension() == 'doc' or $this->file->getClientOriginalExtension() == 'docx') {
                 $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath);
                 $text = '';
                 // Parcourir les sections et récupérer le texte
@@ -190,6 +192,7 @@ class Uploadingfile extends Component
                     }
                
             }
+            
              else {
                 $text = '';
             }
