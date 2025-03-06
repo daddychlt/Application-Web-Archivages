@@ -56,6 +56,12 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+        'temp' => [ // Ajout du disque temporaire
+        'driver' => 'local',
+        'root' => storage_path('app/livewire-tmp'), // Emplacement temporaire
+        'visibility' => 'private',
+        'throw' => false,
+    ],
 
     ],
 

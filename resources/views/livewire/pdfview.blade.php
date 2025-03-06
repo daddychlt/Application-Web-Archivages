@@ -18,16 +18,20 @@
                     </div>
                 </button>
             </header>
-
             <!-- Contenu principal -->
             <div class="grid grid-cols-1 md:grid-cols-4">
                 <!-- Aperçu du document (colonne principale) -->
+                
                 <div class="col-span-3">
-                    @if (in_array($document->type, ['pdf', 'txt', 'png', 'jpeg']))
+                    @if (in_array($document->type, ['pdf','PDF', 'txt', 'png', 'jpeg','PNG','JPEG', 'jpg','JPG']))
+                        
                         <iframe src="{{ asset('storage/' . $document->filename) }}"
                             class="w-full h-[500px] border-none rounded-bl-lg"></iframe>
                     @elseif(in_array($document->type, ['ppt', 'pptx']))
-                        <iframe src="{{ asset('powerpoint.html') }}" class="w-full h-[500px] border-none rounded-bl-lg"></iframe>
+                    <iframe src="https://view.officeapps.live.com/op/view.aspx?src={{ asset('storage/'.$document->filename) }}"
+                        class="w-full h-[500px] border-none rounded-bl-lg">
+                    </iframe>
+                        {{--  class="w-full h-[500px] border-none rounded-bl-lg"></iframe>--}} 
                     @else
                         <iframe src="{{ asset('storage/preview_' . $document->id . '.pdf') }}"
                             class="w-full h-[500px] border-none rounded-bl-lg">Affichage indisponible</iframe>

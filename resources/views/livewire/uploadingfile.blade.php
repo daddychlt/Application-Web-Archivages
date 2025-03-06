@@ -35,6 +35,7 @@
 
         <form wire:submit="save" class="max-w-lg mx-auto space-y-6">
             <!-- File Selection Section -->
+            @csrf
             <div class="space-y-4">
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white" for="file_input">
                     Sélectionner un fichier
@@ -55,7 +56,7 @@
                                     sélectionner</p>
                             </label>
                         </div>
-
+                        
                         @if ($file)
                             <div class="mt-4 p-4 border rounded-lg bg-gray-50">
                                 <div class="flex justify-between items-center">
@@ -268,6 +269,7 @@
             const progressElem = document.getElementById('progress');
             const progressText = document.getElementById('progressText');
             if (progressElem) {
+                
                 progressElem.style.width = '0%';
             }
             if (progressText) {
@@ -277,13 +279,16 @@
 
         // Met à jour la barre en fonction de la progression (Livewire envoie event.detail.progress)
         document.addEventListener('livewire-upload-progress', event => {
+           
             const progress = event.detail.progress; // Progression en pourcentage (0 à 100)
             const progressElem = document.getElementById('progress');
             const progressText = document.getElementById('progressText');
+            
             if (progressElem) {
                 progressElem.style.width = progress + '%';
             }
             if (progressText) {
+                
                 progressText.textContent = progress + '%';
             }
         });
@@ -302,6 +307,7 @@
 
         // En cas d'erreur, réinitialise la barre à 0%
         document.addEventListener('livewire-upload-error', () => {
+
             const progressElem = document.getElementById('progress');
             const progressText = document.getElementById('progressText');
             if (progressElem) {
@@ -316,7 +322,7 @@
     <script>
         // Gestion du Drag & Drop
         const dropzone = document.getElementById('dropzone');
-        const input = document.getElementById('upload');
+        const inputs = document.getElementById('upload');
 
         // Gestion des événements de glisser-déposer
         ['dragover', 'dragleave', 'drop'].forEach(event => {
@@ -347,17 +353,18 @@
         function handleDrop(e) {
             const dt = e.dataTransfer;
             const files = dt.files;
-
+            
             if (files.length) {
                 const dataTransfer = new DataTransfer();
+                
                 dataTransfer.items.add(files[0]);
-                input.files = dataTransfer.files;
+                inputs.files = dataTransfer.files;
 
                 // Déclenche l'événement Livewire
                 const changeEvent = new Event('change', {
                     bubbles: true
                 });
-                input.dispatchEvent(changeEvent);
+                inputs.dispatchEvent(changeEvent);
             }
         }
 

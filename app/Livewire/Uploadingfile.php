@@ -8,6 +8,7 @@ use Livewire\Attributes\Validate;
 use App\Models\Document;
 use App\Models\User;
 use App\Models\ActivityLog;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Smalot\PdfParser\Parser;
 use Spatie\PdfToText\Pdf;
@@ -17,7 +18,6 @@ class Uploadingfile extends Component
 {
     use WithFileUploads;
 
-    #[Validate('required|file|mimes:txt,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,png,jpeg|max:51200')]
     public $file;
     public $mot_cle;
     public $service_id = [];
@@ -25,10 +25,13 @@ class Uploadingfile extends Component
     public $confidence = false;
     public $progress = 0;
 
+    
+
     protected $rules = [
         'mot_cle' => 'string',
         'service_id' => 'required|array|min:1',
         'users_confidence' => 'nullable|array',
+        'file' => 'file|max:204800', // 20MB
     ];
 
     protected $message = [
@@ -45,13 +48,17 @@ class Uploadingfile extends Component
 
     public function save()
     {
+        
 
                 // Configuration pour Dompdf
         $rendererLibraryPath = base_path('vendor/dompdf/dompdf');
         \PhpOffice\PhpWord\Settings::setPdfRenderer(\PhpOffice\PhpWord\Settings::PDF_RENDERER_DOMPDF, $rendererLibraryPath);
 
 
-        $this->validate();
+        $this->validate([
+            'file' => 'required|file|mimes:txt,pdf,doc,docx,xls,xlsx,csv,ppt,pptx,png,jpeg|max:1000200',
+        ]);
+        
 
         // Récupérer le fichier téléchargé
         $file = $this->file;
@@ -80,15 +87,50 @@ class Uploadingfile extends Component
 
             // Le chemin complet du fichier
             $fullPath = storage_path('app/public/' . $path);
-
-            if ($this->file->getClientOriginalExtension() == 'pdf') {
+            
+            if ($this->file->getClientOriginalExtension() == 'pdf' or $this->file->getClientOriginalExtension() == 'PDF') {
                 // Parse PDF file and build necessary objects
                 $parser = new Parser();
-                $pdf = $parser->parseFile($fullPath);
-                $text = $pdf->getText();
+                
+                try{
+                   $pdf = $parser->parseFile($fullPath); 
+                }catch(\Exception $e){
+                    dd("error");
+                }
+                
+                
+                
+                // Récupère toutes les pages
+                    $pages = $pdf->getPages();
+                    
+
+                    // Initialiser une variable pour stocker le texte extrait
+                    $text = '';
+                    $compteError=0;
+                    $iteration=0;
+                    foreach ($pages as $page) {
+                        // Extraire le texte de chaque page
+                        try{
+                          $text .= $page->getText();  
+                        }catch(\Exception $e){
+                            $text .=''; 
+                            $compteError+=1;
+                        }
+                        $iteration+=1;
+                    }
+                    dd('nombre_page='.count($pages).' nombre iteration='.$iteration.' nbre erreur='.$compteError);
+
+              
+
+                
             } elseif($this->file->getClientOriginalExtension() == 'txt') {
                 // Lire le contenu du fichier
-                $text = file_get_contents($fullPath);
+                try{
+                    $text = file_get_contents($fullPath);
+                }catch(\Exception $e){
+                    $text='';
+                }
+                
             } elseif ($this->file->getClientOriginalExtension() == 'doc' | $this->file->getClientOriginalExtension() == 'docx') {
                 $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath);
                 $text = '';
@@ -97,7 +139,12 @@ class Uploadingfile extends Component
                     foreach ($section->getElements() as $element) {
                         if (method_exists($element, 'getText')) {
                             if (method_exists($element, 'getElements')) {
-                                $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
+                                try{
+                                    $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
+                                }catch(\Exception $e){
+                                    $text .='';
+                                }
+                                
                             }
                         }
                     }
@@ -109,11 +156,41 @@ class Uploadingfile extends Component
                     $cellIterator = $row->getCellIterator();
                     $cellIterator->setIterateOnlyExistingCells(false);
                     foreach ($cellIterator as $cell) {
-                        $text .= $cell->getValue() . "\t";
+                        try{
+                           $text .= $cell->getValue() . "\t"; 
+                        }catch(\Exception $e){
+                            $text .=''; 
+                        }
+                        
                     }
                     $text .= "\n";
                 }
-            } else {
+            }elseif ($this->file->getClientOriginalExtension() == 'pptx' || $this->file->getClientOriginalExtension() == 'ppt') {
+                $text = '';
+
+                    $objReader = \PhpOffice\PhpPresentation\IOFactory::createReader('PowerPoint2007');
+                    $presentation = $objReader->load($fullPath);
+            
+                    foreach ($presentation->getAllSlides() as $slide) {
+                        foreach ($slide->getShapeCollection() as $shape) {
+                            if ($shape instanceof \PhpOffice\PhpPresentation\Shape\RichText) {
+                                foreach ($shape->getParagraphs() as $paragraph) {
+                                    foreach ($paragraph->getRichTextElements() as $element) {
+                                        try {
+                                            if ($element instanceof \PhpOffice\PhpPresentation\Shape\RichText\TextElement) {
+                                                $text .= $element->getText() . "\n";
+                                            }
+                                        } catch (\Exception $e) {
+                                            continue; // Ignore l'erreur et passe à l'élément suivant
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+               
+            }
+             else {
                 $text = '';
             }
             
