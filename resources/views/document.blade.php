@@ -82,7 +82,7 @@
         }
     </style>
 
-    <div class="flex h-screen">
+    <div class="flex h-screen relative">
         <!-- Contenu principal -->
         <main class="flex-1 p-6 bg-gray-100 dark:bg-gray-900">
             <!-- Liste de dossiers -->
@@ -103,7 +103,7 @@
                     </div>
                 @endif
                 @if ((Auth::user()->role->nom == 'SuperAdministrateur') | (Auth::user()->role->nom == 'Administrateur'))
-                    @foreach ($services as $service)
+                    @foreach ($servicePaginate as $service)
                         <div>
                             <button 
                                 class="iconButton flex flex-col items-center w-full p-4 bg-white rounded-lg shadow hover:shadow-md transition"
@@ -151,7 +151,11 @@
                     @endforeach
                 @endif
             </div>
+            <div class=" py-4 px-6 bg-white rounded-lg shadow-md hover:shadow-lg transition " style="margin-top:30px ">
+                {{ $servicePaginate->links()}}
+            </div>
         </main>
+        
     </div>
 
     {{-- Menu --}}
@@ -406,6 +410,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -466,7 +471,7 @@
             </button>
         </div>
     @endif
-
+    
     <!-- Footer -->
     <footer class="bg-gray-800 text-gray-300 text-center py-6 w-full">
         <p>&copy; 2025 DCTC-eDoc - Tous droits réservés.</p>

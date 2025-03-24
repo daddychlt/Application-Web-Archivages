@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Jobs\traitementQueueUploadFile;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Validate;
@@ -25,7 +26,7 @@ class AddDocServ extends Component
     public $progress = 0;
 
     protected $rules = [
-        'mot_cle' => 'string',
+        
         'service_id' => 'required|array|min:1',
         'users_confidence' => 'nullable|array',
     ];
@@ -44,6 +45,8 @@ class AddDocServ extends Component
 
     public function save()
     {
+        ini_set('memory_limit', '512M');
+
         $this->validate();
 
         // Récupérer le fichier téléchargé
@@ -69,122 +72,25 @@ class AddDocServ extends Component
         // Le chemin complet du fichier
         $fullPath = storage_path('app/public/' . $path);
 
-        if ($this->file->getClientOriginalExtension() == 'pdf' or $this->file->getClientOriginalExtension() == 'PDF') {
-            // Parse PDF file and build necessary objects
-            $parser = new Parser();
-            ini_set('memory_limit', '-1'); // Désactive la limite de mémoire
-            try{
-               $pdf = $parser->parseFile($fullPath); 
-            }catch(\Exception $e){
-                
-            }
-            
-            
-            
-            // Récupère toutes les pages
-                $pages = $pdf->getPages();
-                
 
-                // Initialiser une variable pour stocker le texte extrait
-                $text = '';
-                $compteError=0;
-                $iteration=0;
-                foreach ($pages as $page) {
-                    // Extraire le texte de chaque page
-                    try{
-                      $text .= $page->getText();  
-                    }catch(\Exception $e){
-                        $text .=''; 
-                        $compteError+=1;
-                    }
-                    $iteration+=1;
-                }
-                //dd('nombre_page='.count($pages).' nombre iteration='.$iteration.' nbre erreur='.$compteError);
-
-          
-
-            
-        } elseif ($this->file->getClientOriginalExtension() == 'txt') {
-            // Lire le contenu du fichier
-            try{
-                $text = file_get_contents($fullPath);
-            }catch(\Exception $e){
-                $text='';
-            }
-        }  elseif ($this->file->getClientOriginalExtension() == 'doc' or $this->file->getClientOriginalExtension() == 'docx') {
-            $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath);
-            $text = '';
-            // Parcourir les sections et récupérer le texte
-            foreach ($phpWord->getSections() as $section) {
-                foreach ($section->getElements() as $element) {
-                    if (method_exists($element, 'getText')) {
-                        if (method_exists($element, 'getElements')) {
-                            try{
-                                $text .= $element->getText() . "\n"; // Ajouter le texte ligne par ligne
-                            }catch(\Exception $e){
-                                $text .='';
-                            }
-                            
-                        }
-                    }
-                }
-            }
-        }elseif ($this->file->getClientOriginalExtension() == 'pptx' || $this->file->getClientOriginalExtension() == 'ppt') {
-            $text = '';
-
-                $objReader = \PhpOffice\PhpPresentation\IOFactory::createReader('PowerPoint2007');
-                $presentation = $objReader->load($fullPath);
-        
-                foreach ($presentation->getAllSlides() as $slide) {
-                    foreach ($slide->getShapeCollection() as $shape) {
-                        if ($shape instanceof \PhpOffice\PhpPresentation\Shape\RichText) {
-                            foreach ($shape->getParagraphs() as $paragraph) {
-                                foreach ($paragraph->getRichTextElements() as $element) {
-                                    try {
-                                        if ($element instanceof \PhpOffice\PhpPresentation\Shape\RichText\TextElement) {
-                                            $text .= $element->getText() . "\n";
-                                        }
-                                    } catch (\Exception $e) {
-                                        continue; // Ignore l'erreur et passe à l'élément suivant
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-           
-        }
-         elseif ($this->file->getClientOriginalExtension() == 'xls' | $this->file->getClientOriginalExtension() == 'xlsx' | $this->file->getClientOriginalExtension() == 'csv') {
-            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($fullPath);
-            $text = '';
-            foreach ($spreadsheet->getActiveSheet()->getRowIterator() as $row) {
-                $cellIterator = $row->getCellIterator();
-                $cellIterator->setIterateOnlyExistingCells(false);
-                foreach ($cellIterator as $cell) {
-                    $text .= $cell->getValue() . "\t";
-                }
-                $text .= "\n";
-            }
-        } else {
-            $text = '';
-        }
 
         
 
         $mot_cle = $this->mot_cle;
 
-        $texts = $text . "\n" . $mot_cle;
+        
 
         $document = Document::create([
             'nom' => $newName,
             'filename' => $path,
             'type' => $this->file->getClientOriginalExtension(),
             'taille' => round($this->file->getSize() / 1024),
-            'content' => $texts,
+            'content' => '',
             "user_id" => Auth::user()->id,
             "confidentiel" => $this->confidence,
         ]);
-
+        traitementQueueUploadFile::dispatch($document, $this->mot_cle ?? '', $this->confidence);// Garantit une string vide si null
+        
         $document->services()->attach($this->service_id);
 
         if ($this->confidence) {
@@ -198,9 +104,9 @@ class AddDocServ extends Component
 
         // Lors de l'ajout d'un document
         ActivityLog::create([
-            'action' => '✅ Document ajouté',
+            'action' => '... Début du traitement du document',
             'description' => $document->nom,
-            'icon' => '✅',
+            'icon' => '...',
             'user_id' => Auth::user()->id,
             'confidentiel' => $this->confidence,
         ]);

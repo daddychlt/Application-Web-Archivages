@@ -25,16 +25,14 @@
                 <div class="col-span-3">
                     @if (in_array($document->type, ['pdf','PDF', 'txt', 'png', 'jpeg','PNG','JPEG', 'jpg','JPG']))
                         
-                        <iframe src="{{ asset('storage/' . $document->filename) }}"
-                            class="w-full h-[500px] border-none rounded-bl-lg"></iframe>
-                    @elseif(in_array($document->type, ['ppt', 'pptx']))
-                    <iframe src="https://view.officeapps.live.com/op/view.aspx?src={{ asset('storage/'.$document->filename) }}"
+                        <iframe src="{{ asset('storage/' . $document->filename) }}"  class="w-full h-[500px] border-none rounded-bl-lg"></iframe>
+
+                    
+                    @else
+                    {{-- Affichage PDF pour les document du paque office --}}
+                    <iframe src="{{ asset('storage/archives/' . $nom) }}"
                         class="w-full h-[500px] border-none rounded-bl-lg">
                     </iframe>
-                        {{--  class="w-full h-[500px] border-none rounded-bl-lg"></iframe>--}} 
-                    @else
-                        <iframe src="{{ asset('storage/preview_' . $document->id . '.pdf') }}"
-                            class="w-full h-[500px] border-none rounded-bl-lg">Affichage indisponible</iframe>
                     @endif
                 </div>
 
@@ -58,29 +56,29 @@
                         <a href="{{ route('tag', $document->id) }}">
                             <button type="button"
                                 class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                <svg class="w-3 h-3 text-white me-2" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
-                                    <path
-                                        d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z" />
-                                    <path
-                                        d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z" />
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                                  </svg>                                  
                                 Laisser un message
                             </button>
                         </a>
                         <a href="{{ asset('storage/' . $document->filename) }}" target="_blank">
                             <button type="button"
                                 class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                <svg class="w-3 h-3 text-white me-2" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
-                                    <path fill-rule="evenodd"
-                                        d="M11.403 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6.403a3.01 3.01 0 0 1-1.743-1.612l-3.025 3.025A3 3 0 1 1 9.99 9.768l3.025-3.025A3.01 3.01 0 0 1 11.403 5Z"
-                                        clip-rule="evenodd" />
-                                    <path fill-rule="evenodd"
-                                        d="M13.232 4a1 1 0 0 1 1-1H20a1 1 0 0 1 1 1v5.768a1 1 0 1 1-2 0V6.414l-6.182 6.182a1 1 0 0 1-1.414-1.414L17.586 5h-3.354a1 1 0 0 1-1-1Z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                                </svg>                                  
                                 Ouvrir hors de l'application
+                            </button>
+                        </a>
+                        <a href="{{ route('documents.edit', $document->id) }}" target="_blank">
+                            <button type="button"
+                                class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-green-500 rounded-lg hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                  </svg>
+                                   
+                                Editer document
                             </button>
                         </a>
                     </div>

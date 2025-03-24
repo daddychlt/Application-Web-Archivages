@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('documents', function (Blueprint $table) {
-            $table->longText('content')->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            $table->string('status')
+                  ->default('pending')
+                  ->comment('pending|processing|completed|failed');
         });
     }
 
@@ -21,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        //
     }
 };

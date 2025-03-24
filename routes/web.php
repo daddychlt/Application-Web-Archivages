@@ -5,13 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentEditor;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PdfView;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LicenceController;
-
+use Illuminate\Support\Facades\Request;
 
 Route::get('/newAccount', [RegisterController::class, 'index'])->middleware('checklicence')->name('register');
 Route::post('/Account/store', [RegisterController::class, 'store'])->middleware('checklicence')->name('user.new');
@@ -79,4 +80,6 @@ Route::middleware([
     Route::get('/historique', [HistoryController::class, 'index'])->middleware('checklicence')->name('history');
 })->group(function () {
     Route::get('/export-historque-pdf', [HistoryController::class, 'exportPDF'])->middleware('checklicence')->name('history.export');
+})->group(function(){
+    Route::get('/editer/{id}', [DocumentEditor::class, 'index'])->name('documents.edit');
 });

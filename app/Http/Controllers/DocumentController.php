@@ -73,7 +73,7 @@ class DocumentController extends Controller
             'document_ids.*' => 'exists:documents,id',
         ]);
 
-        dd($validatedData);
+        
 
 
         // Supprimer les documents sélectionnés
@@ -91,10 +91,10 @@ class DocumentController extends Controller
         $documents = Document::all();
         $documentGene = Document::doesntHave('services')->get();
         $services = Service::all();
-
+        $servicePaginate=Service::paginate(12);
         $totalDocuments = Document::all()->count();
 
 
-        return view('document', compact('documents', 'documentGene', 'service', 'serviceIdent', 'services', 'totalDocuments'));
+        return view('document', compact('documents', 'documentGene', 'service','servicePaginate', 'serviceIdent', 'services', 'totalDocuments'));
     }
 }
