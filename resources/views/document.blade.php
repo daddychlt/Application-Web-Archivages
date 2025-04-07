@@ -144,7 +144,7 @@
                                         <path
                                             d="M10 4a2 2 0 0 1 1.414.586L13 6h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5Z" />
                                     </svg>
-                                    <span class="mt-2 text-sm font-medium text-gray-700">{{ $serv->nom }}</span>
+                                    <span class="mt-2 text-sm font-medium text-gray-700">{{ $serv->nom }}</span> 
                                 </a>
                             </button>
                         </div>
@@ -310,7 +310,7 @@
                                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                                     <th scope="row"
                                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white inline-flex space-x-2">
-                                                        {{ $document->nom }}
+                                                        {{ $document->nom }} 
                                                     </th>
                                                     <td class="px-6 py-4">
                                                         @if ($document->type == 'pdf')
@@ -516,7 +516,7 @@
             // Sélectionne toutes les divs avec la classe .iconFile
         const dropzoneService = document.querySelectorAll('.iconButton');
         const openModalDoc= document.querySelector('.openModalDoc');
-
+        let fileTotal;
 
         // Fonction pour empêcher le comportement par défaut
         function preventDefaults(e) {
@@ -558,15 +558,24 @@
                 const dt = e.dataTransfer;
                 const files = dt.files;
 
-                if (files.length) {
+            if (files.length) {
                     // Simule un "drop" sur `.dropzone`
-                    const dropEvent = new DragEvent("drop", {
-                        bubbles: true,
-                        cancelable: true,
-                        dataTransfer: dt
-                    });
-
-                    dropzone.dispatchEvent(dropEvent);
+            if (dropzone) {
+            [...files].forEach(file => {
+                
+                const dropEvent = new DragEvent("drop", {
+                    bubbles: true,
+                    cancelable: true,
+                    dataTransfer: new DataTransfer()
+                });
+                dropEvent.dataTransfer.items.add(file);
+                dropzone.dispatchEvent(dropEvent);
+            });
+            fileTotal=files.length
+            
+        } else {
+            console.error("Aucune dropzone trouvée.");
+        }
                 }
             });
         });

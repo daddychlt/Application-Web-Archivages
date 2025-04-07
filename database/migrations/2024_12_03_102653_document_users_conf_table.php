@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('document_users_conf', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('SET NULL')->onUpdate('cascade');
             $table->foreignId('doc_id')->references('id')->on('documents')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
