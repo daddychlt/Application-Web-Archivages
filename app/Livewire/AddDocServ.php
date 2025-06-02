@@ -82,6 +82,7 @@ class AddDocServ extends Component
             'taille' => round($file->getSize() / 1024),
             'content' => '',
             "user_id" => Auth::user()->id,
+            "folder_id"=>1,
             "confidentiel" => $this->confidence,
         ]);
 

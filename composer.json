@@ -12,7 +12,7 @@
         "firebase/php-jwt": "^6.11",
         "http-interop/http-factory-guzzle": "^1.2",
         "ilovepdf/ilovepdf-php": "^1.2",
-        "laravel-lang/lang": "^15.9",
+        "laravel-lang/lang": "^15.20",
         "laravel/framework": "^11.9",
         "laravel/jetstream": "^5.3",
         "laravel/sanctum": "^4.0",

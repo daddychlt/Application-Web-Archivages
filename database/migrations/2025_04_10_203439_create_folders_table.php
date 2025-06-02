@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_users_identification', function (Blueprint $table) {
+        Schema::create('folders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('services_id')->references('id')->on('services')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('name');
+            $table->foreignId('parent_id')->nullable()->constrained('folders')->onDelete('cascade'); // Sous-dossier
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('service_users_identification');
+        Schema::dropIfExists('folders');
     }
 };

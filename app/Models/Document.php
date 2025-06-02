@@ -12,7 +12,7 @@ class Document extends Model
     use HasFactory, Searchable;
 
 
-    protected $fillable = ['nom', 'filename', 'type', 'taille', 'user_id', 'confidentiel', 'content'];
+    protected $fillable = ['nom', 'filename', 'type', 'taille', 'user_id', 'confidentiel', 'content','folder_id','verrouille','code_verrou'];
 
     // Définissez les attributs qui seront indexés
     public function toSearchableArray()
@@ -43,5 +43,9 @@ class Document extends Model
     {
         return $this->belongsToMany(User::class, 'document_users_conf', 'doc_id', 'user_id')->withTimestamps();
         ;
+    }
+    public function folder()
+    {
+        return $this->belongsTo(folder::class);
     }
 }
